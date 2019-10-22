@@ -29,7 +29,7 @@ import Pretty.ShowOptions (showOptions)
 scBanner :: String
 scBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Style Checker (Version of 04/09/2019)"
+   bannerText = "Curry Style Checker (Version of 22/10/2019)"
    bannerLine = take (length bannerText) (repeat '-')
 
 -- URL containing Curry style guide:
