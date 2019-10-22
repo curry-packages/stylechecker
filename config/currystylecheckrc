@@ -1,0 +1,112 @@
+-- The default configuration of the style-check tool
+
+
+-- MAXLINELENGTH
+-- maximal length allowed for a line
+maxLineLength = 80
+
+
+-- OUTPUT
+-- TEXT: normal console output
+-- JSON: prettyprinted JSON in console
+oType = TEXT
+
+
+-- VERBOSITY
+-- 0: quiet (warning only)
+-- 1: (default, show: modul, hints, code)
+-- 2: (verbose, show infos and warnings)
+-- 3: show all options
+verbosity = 1
+
+
+-- MESSAGES
+-- show hint after warning
+hints = 1
+-- show code part where error occured
+code  = 1
+
+
+-- SRC (checks)
+-- warn if:
+-- maximal length is exceeded
+lineLength          = 1
+-- tabs found
+tabs                = 1
+-- spaces at end of line found
+trailingSpaces      = 1
+-- other whitespaces found
+whiteSpaces         = 1
+
+
+-- INDENT, ALIGMENT, FORMATTING
+
+-- if-then-else:
+ifThenElse    = 1
+-- case expressions:
+case          = 1
+-- do notations:
+do            = 1
+-- let (in) expressions
+let           = 1
+-- guard equations
+guard         = 1
+-- right hand sides of function declarations of one function
+functionRhs   = 1
+-- module header
+moduleHeader  = 1
+-- import declarations
+imports       = 1
+-- data declarations (both with constructs or record)
+data          = 1
+-- list and tuple declarations
+list          = 1
+-- deriving
+deriving      = 1
+-- class declaration
+class         = 1
+-- instance declaration
+instance      = 1
+
+-- GENERIC
+-- NOTE: works only, if function declarations are written in one block
+-- check wether:
+-- top-level functions have type signatures
+-- are written just in above their function:
+signatures    = 1
+-- there is at least one blank line between top level declarations
+blankLines    = 1
+
+-- SUPERFLUOS, OPTIMIZABLE CODE
+
+---- boolean
+-- True == bool
+-- (==) bool False
+equalstrue        = 1
+-- if bool then True else False
+thentrueelsefalse = 1
+
+---- ordering
+-- not (a = b)
+-- not (a /= b)
+notEqual          = 1
+-- not (a <= b)
+-- not (a > b)
+notOrd            = 1
+
+---- list
+-- l == []
+-- (/=) [] l
+equalsEmptyList   = 1
+-- foldl || False list
+-- foldr && True list
+andOr             = 1
+
+---- functions
+-- \x -> x
+identFunc         = 1
+-- \x y -> x
+-- \x y -> y (here, switch paramters)
+constFunc         = 1
+-- putStrLn (show string)
+print             = 1
