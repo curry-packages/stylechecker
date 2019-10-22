@@ -1,6 +1,6 @@
 {
     "name": "stylechecker",
-    "version": "0.0.1",
+    "version": "1.0.0",
     "author": "Ning Cheng <stu121873@mail.uni-kiel.de>",
     "maintainer": "Michael Hanus <mh@informatik.uni-kiel.de>",
     "synopsis": "A tool to check the formatting style of Curry programs",
