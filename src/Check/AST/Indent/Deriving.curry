@@ -21,9 +21,9 @@ checkDeriving e _ =
 -- check according to type
 checkDeriving' :: SpanInfo -> [ConstrDecl] -> [QualIdent] -> CSM ()
 checkDeriving' sI (l:ls) d = case l of
-  (ConstrDecl _ _ _ _ _)  -> checkDerivingC sI (l:ls) d
-  (RecordDecl _ _ _ _ _)  -> checkRecord sI (l:ls) d
-  _                       -> return ()
+  (ConstrDecl _ _ _)  -> checkDerivingC sI (l:ls) d
+  (RecordDecl _ _ _)  -> checkRecord sI (l:ls) d
+  _                   -> return ()
 
 -- check formatting
 checkDerivingC :: SpanInfo -> [ConstrDecl] -> [QualIdent]-> CSM ()
@@ -92,7 +92,7 @@ checkRecord :: SpanInfo -> [ConstrDecl] -> [QualIdent] -> CSM ()
 checkRecord (SpanInfo (Span (Position ls cs) (Position le ce))
             (_:_:(Span (Position l1d c1d) _):
               symbs@((Span (Position l1s c1s) (Position _ _)):_)))
-            ((RecordDecl (SpanInfo _ spans ) _ _ ident fs):_)
+            ((RecordDecl (SpanInfo _ spans ) ident fs):_)
             (deriv:derivs) =
               unlessM (ls == le) --one line
                 (if (getSpanLi (last spans) == l1d) -- 'deriving' position

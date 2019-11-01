@@ -21,9 +21,9 @@ checkData e _ =
 -- apply check according to declaration type
 checkData' :: SpanInfo -> [ConstrDecl] -> CSM ()
 checkData' sI (l:ls) = case l of
-  (ConstrDecl _ _ _ _ _)  -> checkCData sI (l:ls)
-  (RecordDecl _ _ _ _ _)  -> checkRecord sI (l:ls)
-  _                       -> return ()
+  (ConstrDecl _ _ _)  -> checkCData sI (l:ls)
+  (RecordDecl _ _ _)  -> checkRecord sI (l:ls)
+  _                   -> return ()
 
 -- check different formatting ascpects
 checkCData :: SpanInfo -> [ConstrDecl] -> CSM ()
@@ -96,7 +96,7 @@ getFirstBar [] = -1
 -- checks various formatting aspects of records
 checkRecord :: SpanInfo -> [ConstrDecl] -> CSM ()
 checkRecord (SpanInfo (Span (Position ls cs) (Position le ce)) _)
-            ((RecordDecl (SpanInfo _ symbs@((Span (Position _ c) _):_)) _ _ ident fs):_)
+            ((RecordDecl (SpanInfo _ symbs@((Span (Position _ c) _):_)) ident fs):_)
             = if (ls == (getLi (getSpanInfo ident))) -- one line
                 then
                   (if (spanAlign symbs) -- alignment symbols { } ,
@@ -183,4 +183,3 @@ getTypeSpan (FieldDecl _ _ (ConstructorType (SpanInfo s _) _)) = s
 gatherSpanFromFieldDecls :: (FieldDecl -> Span) -> [FieldDecl] -> [Span]
 gatherSpanFromFieldDecls _   []     = []
 gatherSpanFromFieldDecls fun (f:fs) = [(fun f)]++(gatherSpanFromFieldDecls fun fs)
-
