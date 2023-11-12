@@ -23,7 +23,7 @@
         "main": "Main"
     },
     "source": {
-        "git": "https://git.ps.informatik.uni-kiel.de/curry-packages/stylechecker.git",
+        "git": "https://github.com/curry-packages/stylechecker.git",
         "tag": "$version"
     }
 }
