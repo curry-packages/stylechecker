@@ -9,7 +9,7 @@ import Text.Pretty
 
 import Types
 
--- check if not (a op b) construct
+-- Checks for the use of `not (a op b)` constructs.
 checkNotOrd :: Expression a -> Int -> CSM ()
 checkNotOrd e _ =
   case e of
@@ -43,7 +43,7 @@ checkNotOrd e _ =
       ->  checkNotOrd' sI op warnNotOrd'
     _ -> return ()
 
--- case compareoperations are used, warn with corrections
+-- Case compareoperations are used, warn with corrections.
 checkNotOrd' :: SpanInfo -> String -> (String -> String -> SpanInfo -> CSM()) -> CSM ()
 checkNotOrd' sI s f = case s of
   "<"  -> f s ">=" sI
@@ -52,14 +52,14 @@ checkNotOrd' sI s f = case s of
   ">=" -> f s "<" sI
   _    -> return ()
 
--- report for infix
+-- Report for infix.
 warnNotOrd :: String -> String -> SpanInfo -> CSM ()
 warnNotOrd s1 s2 sI = report (Message
                                (getSpan sI)
                                (text "Do not use" <+> colorizeKey ("not (a "++s1++" b)"))
                                (text "Use" <+> colorizeKey ("a "++s2++" b") <+> text "instead"))
 
--- report for apply
+-- Report for apply.
 warnNotOrd' :: String -> String -> SpanInfo -> CSM ()
 warnNotOrd' s1 s2 sI = report (Message
                                 (getSpan sI)

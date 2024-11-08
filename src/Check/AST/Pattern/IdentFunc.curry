@@ -6,17 +6,18 @@ import Curry.Position
 import Curry.Types
 import Curry.Ident
 import Text.Pretty
+import Control.Applicative ( when )
 
 import Types
 
--- instead of lambda function \x -> x use id
+-- Recommends the use of `id` instead of the lambda function `\x -> x`.
 checkIdentFunc :: Expression a -> Int -> CSM ()
 checkIdentFunc e _ =
   case e of
     (Lambda
       sI
       [(VariablePattern _ _ ident1)]
-      (Variable _ _ (QualIdent _ _ ident2))) -> whenM (ident1 == ident2)
+      (Variable _ _ (QualIdent _ _ ident2))) -> when (ident1 == ident2)
                                                   (report ( Message
                                                             (getSpan sI)
                                                             ( text "superfluous code"

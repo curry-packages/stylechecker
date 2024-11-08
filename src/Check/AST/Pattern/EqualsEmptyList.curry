@@ -9,7 +9,7 @@ import Text.Pretty
 
 import Types
 
--- check for infix operation and function with two parameters
+-- Check for infix operation and function with two parameters.
 checkEqualsEmptyList :: Expression a -> Int -> CSM ()
 checkEqualsEmptyList e _ = case e of
   (InfixApply
@@ -32,7 +32,8 @@ checkEqualsEmptyList e _ = case e of
     -> checkApply e
   _ -> return ()
 
--- if compared with [] use function null instead
+-- Checks whether an infix comparison with the empty list (such as `x == []`) 
+-- is used. If so, a warning is emitted (use 'null' instead).
 checkInfix :: Expression a -> CSM ()
 checkInfix e =
   case checkInfixCompare e of
@@ -58,7 +59,8 @@ checkInfix e =
                   (text "Use" <+> colorizeKey "not (null a)" <+> text "instead"))
     _ -> return ()
 
--- if compared with [] use function null instead
+-- Checks whether a comparison operator is applied to the empty list 
+-- (e.g., `(==) x []`). If so, a warning is emitted (use 'null' instead).
 checkApply :: Expression a -> CSM ()
 checkApply e =
   case checkApplyCompare e of

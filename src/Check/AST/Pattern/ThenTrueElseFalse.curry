@@ -9,7 +9,7 @@ import Text.Pretty
 
 import Types
 
--- per patternmatching apply actual check only on ifthenelse constructs
+-- Applies actual check on if-then-else constructs. 
 checkThenTrueElseFalse :: Expression a -> Int -> CSM ()
 checkThenTrueElseFalse e _ =
   case e of
@@ -21,9 +21,9 @@ checkThenTrueElseFalse e _ =
       (Constructor _ _ (QualIdent _ _ (Ident _ "True" _))))  -> checkThenTrueElseFalse' sI ""
     _                                                        -> return ()
 
--- report
+-- Emits a warning for a superfluous if-then-else construct, given some span info.
 checkThenTrueElseFalse' :: SpanInfo -> String -> CSM ()
-checkThenTrueElseFalse' (SpanInfo sp sps) s =
+checkThenTrueElseFalse' (SpanInfo sp _) s =
   report ( Message
            sp
            ( text "superfluous code"
@@ -35,3 +35,4 @@ checkThenTrueElseFalse' (SpanInfo sp sps) s =
            <+> colorizeKey (s ++ "condition")
            )
          )
+checkThenTrueElseFalse' NoSpanInfo _ = return ()

@@ -1,11 +1,13 @@
 module Parse.Config where
 
-import List             (isPrefixOf, isSuffixOf, last)
-import Read             (readInt)
+import Data.List     ( isPrefixOf, isSuffixOf, last )
+import Control.Monad ( when )
 
-import Pretty.ToJson    (renderMessagesToJson)
-import Pretty.ToString  (renderMessagesToString)
+import Pretty.ToJson    ( renderMessagesToJson )
+import Pretty.ToString  ( renderMessagesToString )
 import Types
+
+import Prelude hiding ( ifThenElse )
 
 --defaultConfig, checks everything, maxLineLength is 80
 defaultConfig :: Config
@@ -105,7 +107,7 @@ readLength :: [String] -> Int -> Int
 readLength [] len
   = len
 readLength (l:ls) len
-  | isPrefixOf "maxLineLength" l = readInt $ last $ words l
+  | isPrefixOf "maxLineLength" l = read $ last $ words l
   | otherwise                    = readLength ls len
 
 -- first line that starts with "hint" provides Bool if hints are on or off
@@ -132,5 +134,5 @@ readOType (l:ls)
 readVerbosity :: [String] -> Int -> Int
 readVerbosity [] n = if ((n < 4) && ( n > -1)) then n else 1
 readVerbosity (l:ls) n
-  | isPrefixOf "verbosity" l    = readVerbosity ls (readInt $ last $ words l)
+  | isPrefixOf "verbosity" l    = readVerbosity ls (read $ last $ words l)
   | otherwise                 = readVerbosity ls n

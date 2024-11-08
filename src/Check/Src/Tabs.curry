@@ -1,13 +1,13 @@
 module Check.Src.Tabs where
 
-import List
+import Data.List
 
 import Curry.Position
 import Curry.Span
 import Text.Pretty
 
 import Types
-import State
+import Control.Monad.Trans.State
 
 checkTab :: SrcLine -> CSM ()
 checkTab (n,l) = do reportTabs n (map ((+) 1) (elemIndices '\t' l))

@@ -8,16 +8,13 @@ import Text.Pretty
 
 import Types
 
--- checking module
+-- Checks all imports in a module.
 checkImports :: Module a -> Int -> CSM ()
-checkImports e _ =
-  case e of
-    (Module _ _ _ _ imps _)   -> checkImports' imps
-    _                         -> return ()
+checkImports (Module _ _ _ _ _ imps _) _ = checkImports' imps
 
--- if not qualified and no imports are specified, warn
+-- Emits a warning if an import is not qualified and no imports are specified.
 checkImports' :: [ImportDecl] -> CSM ()
-checkImports' [] = return ()
+checkImports' []     = return ()
 checkImports' (i:is) = case i of
   (ImportDecl (SpanInfo sp _) _ False _ Nothing) ->
     do
@@ -29,5 +26,5 @@ checkImports' (i:is) = case i of
                       )
              )
       checkImports' is
-  otherwise                                      ->
+  _ ->
       checkImports' is

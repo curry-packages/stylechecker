@@ -1,13 +1,12 @@
 module Parse.CommandLine where
 
-import Char    ( toUpper )
-import System  ( getProgName, getArgs )
-import GetOpt
-import Read
+import Data.Char             ( toUpper )
+import System.Environment    ( getProgName, getArgs )
+import System.Console.GetOpt
 
 import Types
 
--- options
+-- Options
 options :: [OptDescr Flag]
 options =
   [ Option "h?" ["help"]   (NoArg  Help)           "print help and exit"
@@ -15,7 +14,7 @@ options =
   , Option "a"  ["add"]    (ReqArg Add    "CHECK") "applies given style check"
   , Option "o"  ["output"] (ReqArg checkOType "TYPE" )
            "determines output type of messages\nwhere TYPE is TEXT (default) or JSON"
-  , Option "v" ["verbosity"] (ReqArg (\l -> Verbosity (readInt l)) "LEVEL" )
+  , Option "v" ["verbosity"] (ReqArg (\l -> Verbosity (read l)) "LEVEL" )
      ("verbosity level:\n0: quiet (warning only)\n" ++
       "1: (default, show: module, hints, code)\n" ++
       "2: (verbose, show infos and warnings)\n3: show all options and details")
@@ -27,8 +26,8 @@ options =
          then OType us
          else error $ "Illegal output type `" ++ s ++ "' (try `-h' for help)"
 
--- returns for a list of program parameters a list of flags
--- and further (unprocessed) parameters
+-- Returns for a list of program parameters a list of flags
+-- and further (unprocessed) parameters.
 parseOpts :: [String] -> IO ([Flag], [String])
 parseOpts argv =
   case getOpt Permute options argv of
