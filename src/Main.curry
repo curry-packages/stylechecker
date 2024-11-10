@@ -182,7 +182,7 @@ getAST fileName config =
     then do restrict config 2 $ "INFO: Getting SpanAST of " ++ fileName
             ast <- readFullAST fileName
             const (return ast) $!! ast
-    else return (Module
+    else return $ Module
                   (SpanInfo (Span (Position 1 1) (Position 1 1)) [])
                   WhitespaceLayout
                   []
@@ -190,7 +190,6 @@ getAST fileName config =
                   Nothing
                   []
                   []
-                )
 
 -- Gets filename and config, if any check on src is on (config),
 -- return the sourcecode in form of a list of lines, which

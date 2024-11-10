@@ -14,7 +14,7 @@ import Prelude hiding ( empty )
 
 -- Takes a list of messages and transforms into a single String for output.
 renderMessagesToString :: Config -> String -> [SrcLine] -> [Message] -> String
-renderMessagesToString conf name src ms = intercalate "\n\n" $ map (toString conf name src) ms
+renderMessagesToString conf name src = intercalate "\n\n" . map (toString conf name src)
 
 -- Renders a single message in from of:
 -- Startline, Starcolumn ; Endline, Endcolumn
@@ -34,29 +34,28 @@ toString conf name src m = case m of
           )
   _ -> error "toString: Invalid Span"
 
---return Doc with formatted Warning
+-- Return `Doc` with formatted Warning.
 warningToDoc :: Doc -> Doc
 warningToDoc sW = yellow (text "Warning") <> text ":"
                      <+> sW
 
---return Doc with formatted Hint
+-- Return `Doc` with formatted Hint.
 hintToDoc :: Config -> Doc -> Doc
 hintToDoc conf sH = if (hints conf && (verbosity conf) >= 1)
-                         then text "Hint"
-                              <> text ":"
-                              <+> sH
-                              else empty
+                      then text "Hint:" <+> sH
+                      else empty
 
---renders a Position to Doc
+-- Renders a `Position` to `Doc`.
 posToDoc :: Position -> Doc
 posToDoc (Position line column) =
   text ((show line) ++ ":" ++ (show column))
 posToDoc NoPos = error "posToDoc: NoPos"
 
+--- Colors a `Doc` in cyan.
 lineColor :: (Doc -> Doc)
 lineColor = cyan
 
---returns corresponding code in Doc
+-- Returns corresponding code in `Doc`.
 getCodeDoc :: [SrcLine] -> Span -> Doc
 getCodeDoc (l:ls) sp = case sp of 
   (Span (Position l1 c1) (Position l2 c2))
@@ -91,25 +90,25 @@ getCodeDoc (l:ls) sp = case sp of
   _ -> error "getCodeDoc: Invalid Span"
 getCodeDoc [] _ = empty
 
--- creates 0|
+-- Creates 0|
 --         1|
 --         2|
--- in front of code excerpt
+-- in front of code excerpt.
 getLineNumDoc :: SrcLine -> Doc
 getLineNumDoc l = lineColor $ empty <+> text (show (fst l)) <+> text "|"
 
--- same as getLineNumDoc but for the underline line
+-- Same as `getLineNumDoc` but for the underline line.
 createUnderLineNumDoc :: SrcLine -> Doc
 createUnderLineNumDoc l = lineColor $ text ((replicate (length (show (fst l))) ' ') ++ " | ")
 
--- retrieves code excerpt and marks parts red by given condition
+-- Retrieves code excerpt and marks parts red by given condition.
 getLineDoc :: Int -> (Int -> Bool) -> String -> Doc
 getLineDoc n f (s:ss)
   | f n              = red (text ([s])) <> getLineDoc (n+1) f ss
   | otherwise        = text [s] <> getLineDoc (n+1) f ss
 getLineDoc _ _ []    = empty
 
--- underlines part of corresponding code which are marked in red
+-- Underlines part of corresponding code which are marked in red.
 createUnderLineDoc :: Int -> (Int -> Bool) -> Bool -> String -> Doc
 createUnderLineDoc n f b (s:ss)
   | not (isSpace s) && not b && f n       = red (text "^") <>  createUnderLineDoc (n+1) f (not b) ss
@@ -118,7 +117,7 @@ createUnderLineDoc n f b (s:ss)
   | otherwise                             = space <> createUnderLineDoc (n+1) f b ss
 createUnderLineDoc _ _ _ []               = empty
 
--- underlining for the case, that the warning area is in one line
+-- Underlining for the case, that the warning area is in one line.
 createUnderLineDoc' :: Int -> (Int -> Bool) -> String -> Doc
 createUnderLineDoc' n f (_:ss)
   | f n                                   = red (text "^") <> createUnderLineDoc' (n+1) f ss

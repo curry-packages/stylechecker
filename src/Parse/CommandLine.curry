@@ -32,7 +32,7 @@ parseOpts :: [String] -> IO ([Flag], [String])
 parseOpts argv =
   case getOpt Permute options argv of
     -- getOpts with no fixed order, show possible options, if error occured
-    (o,n,[]  ) -> return (o,n)
+    (o,n,[]  ) -> return (o, n)
     (_,_,errs) -> ioError (userError (concat errs ++ usageText))
 
 -- Help text

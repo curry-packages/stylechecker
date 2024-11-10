@@ -20,14 +20,14 @@ checkBlankLines (Module sI _ _ _ _ _ decls) _ = checkBlankLines' sI decls
 -- is applied.
 checkBlankLines' :: SpanInfo -> [Decl a] -> CSM ()
 checkBlankLines' _ []                   = return ()
-checkBlankLines' _  (_:[])              = return () --noBlank sI decl
+checkBlankLines' sI (d:[])              = noBlank sI d
 checkBlankLines' sI (decl1:decl2:decls) =
   case decl1 of
     (TypeSig _ _ _)     -> checkBlankLines' sI (decl2:decls)
     (InfixDecl _ _ _ _) -> case decl2 of
-                           (InfixDecl _ _ _ _) ->  checkBlankLines' sI (decl2:decls)
-                           _                   ->  do blankLine decl1 decl2
-                                                      checkBlankLines' sI (decl2:decls)
+                             (InfixDecl _ _ _ _) ->  checkBlankLines' sI (decl2:decls)
+                             _                   ->  do blankLine decl1 decl2
+                                                        checkBlankLines' sI (decl2:decls)
     _                   -> do blankLine decl1 decl2
                               checkBlankLines' sI (decl2:decls)
 
@@ -48,11 +48,11 @@ blankLine decl1 decl2 = do
                   )
           )
 
--- Not used yet, checking for "trailing blanklines".
+-- Not used yet, checks for "trailing blanklines".
 noBlank :: SpanInfo -> Decl a -> CSM ()
 noBlank sI decl = do
   let sID = getSpanInfo decl
-  unless ((getEndLi sI) == (getEndLi sID))
+  unless (getEndLi sI == getEndLi sID)
           (report (Message
                     (getSpan sI)
                     ( colorizeKey "blank line(s)"

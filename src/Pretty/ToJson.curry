@@ -16,7 +16,7 @@ import Prelude hiding ( empty )
 
 -- Takes a list of messages and transforms into a single Json-Object for output.
 renderMessagesToJson :: Config -> String -> [SrcLine] -> [Message] -> String
-renderMessagesToJson conf name src ms = ppJSON $ JArray $ map (toJson conf name src) ms
+renderMessagesToJson conf name src = ppJSON . JArray . map (toJson conf name src)
 
 -- Renders a single message with fields:
 -- [ ("file" : string),
@@ -34,11 +34,11 @@ toJson conf name _ m = case m of
     JObject [ ("file", JString name)
             , ("span", JObject [ ("from", JObject [ ("line" ,  JNumber (toFloat l1))
                                                   , ("column", JNumber (toFloat c1))])
-                              , ("to", JObject [ ("line" ,  JNumber (toFloat l2))
-                                                , ("column", JNumber (toFloat c2))])
-                              ])
+                               , ("to",   JObject [ ("line" ,  JNumber (toFloat l2))
+                                                  , ("column", JNumber (toFloat c2))])
+                               ])
             , ("warning", JString (pPrint (warningToDoc sW)))
-            ,("hint", JString (pPrint (hintToDoc conf sH)))
+            , ("hint",    JString (pPrint (hintToDoc conf sH)))
             ]
   _ -> error "toJson: Invalid Span"
 
@@ -50,7 +50,5 @@ warningToDoc sW = text "Warning" <> text ":"
 -- Return Doc with formatted hint.
 hintToDoc :: Config -> Doc -> Doc
 hintToDoc conf sH = if (hints conf)
-                         then text "Hint"
-                              <> text ":"
-                              <+> sH
-                              else empty
+                      then text "Hint:" <+> sH
+                      else empty

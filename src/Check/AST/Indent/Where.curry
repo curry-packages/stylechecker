@@ -11,10 +11,10 @@ import Types
 
 -- Checks in function for `where` declarations.
 checkWhere :: Decl a -> Int -> CSM ()
-checkWhere e _ =
+checkWhere e _ = 
   case e of
-    (FunctionDecl sI _ _ eqs)   -> checkWhere' sI eqs
-    _                           -> return ()
+    (FunctionDecl sI _ _ eqs) -> checkWhere' sI eqs
+    _                         -> return ()
 
 -- Checks for both types.
 checkWhere' :: SpanInfo -> [Equation a] -> CSM ()
@@ -22,10 +22,10 @@ checkWhere' _   []       = return ()
 checkWhere' fSI (eq:eqs) = case fSI of 
   (SpanInfo (Span (Position _ p) _) _) -> 
     case eq of
-      (Equation _ _ _ (SimpleRhs (SpanInfo _ [sp]) _ _ decls))  -> do checkDecls p sp decls
-                                                                      checkWhere' fSI eqs
-      (Equation _ _ _ (GuardedRhs (SpanInfo _ [sp]) _ _ decls)) -> do checkDecls p sp decls
-                                                                      checkWhere' fSI eqs
+      (Equation _ _ _ (SimpleRhs (SpanInfo _ (_:sp:_)) _ _ decls))  -> do checkDecls p sp decls
+                                                                          checkWhere' fSI eqs
+      (Equation _ _ _ (GuardedRhs (SpanInfo _ (_:sp:_)) _ _ decls)) -> do checkDecls p sp decls
+                                                                          checkWhere' fSI eqs
       _ -> return ()
   _ -> return ()
 
@@ -35,8 +35,7 @@ checkDecls :: Int -> Span -> [Decl a] -> CSM ()
 checkDecls _ _  []           = return ()
 checkDecls i sp (decl:decls) = case sp of
   (Span (Position l1 c1) eP) -> 
-    unless ((getEndLi (getSpanInfo decl)) == l1) $
-      do
+    unless ((getEndLi (getSpanInfo decl)) == l1) $ do
         unless (c1==(i+1))
           (report (Message (Span (Position l1 c1) eP)
                     (colorizeKey "where" <+> text "wrong indention")
