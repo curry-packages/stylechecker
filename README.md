@@ -72,7 +72,8 @@ On can set these options also in the file `.currystylecheckrc`.
 There, a check is turned on if its values is `1` and it is turned
 off if its values is `0`.
 The following code shows a possible configuration (the default
-configuration can be found in `config/currystylecheckrc`):
+configuration can be found in the file `config/currystylecheckrc`
+in the package sources):
 
     -- configuration for style-check tool
 

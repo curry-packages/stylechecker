@@ -111,6 +111,7 @@ fInv x = x - 1
 Trailing Spaces should be avoided.
 Binary operators, like `(++)`{.curry}, are surrounded with a single
 space on either side.
+
 ~~~ {.curry}
 -- bad
 "Not"++"good"
@@ -548,30 +549,30 @@ The following guidelines are only a handful of examples.
 
 ~~~ {.curry}
 -- incorrect
-f x = if (x == True) ...
---correct
-f x = if x ...
+f x = if (x == True) then ...
+-- correct
+f x = if x then ...
 
 -- incorrect
 f x = if x then True else False
---correct
+-- correct
 f x = x
 ~~~
 
 ## Ordering
 
 ~~~ {.curry}
---incorrect
+-- incorrect
 ... not (a = b) ...
 ... not (a /= b) ...
---correct
+-- correct
 ... a /= b ...
 ... a == b ...
 
---incorrect
+-- incorrect
 ... not (a <= b) ...
 ... not (a > b) ...
---correct
+-- correct
 ... a > b ...
 ... a <= b ...
 ~~~
@@ -582,14 +583,14 @@ f x = x
 -- incorrect
 ... l == [] ...
 ... (/=) [] l ...
---correct
+-- correct
 ... null l ...
 ... not (null l) ...
 
---incorrect
+-- incorrect
 ... foldl || False list ...
 ... foldr && True list ...
---correct
+-- correct
 ... Or list ...
 ... And list ...
 ~~~
@@ -604,12 +605,12 @@ f x = x
 
 -- incorrect
 ... \x y -> x ...
---correct
+-- correct
 ... const ...
 
---incorrect
+-- incorrect
 ... putStrLn (show someString) ...
---correct
+-- correct
 ... print someString ...
 ~~~
 
