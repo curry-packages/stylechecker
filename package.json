@@ -1,6 +1,6 @@
 {
     "name": "stylechecker",
-    "version": "1.1.0",
+    "version": "2.0.0",
     "author": "Ning Cheng <stu121873@mail.uni-kiel.de>",
     "maintainer": "Michael Hanus <mh@informatik.uni-kiel.de>",
     "synopsis": "A tool to check the formatting style of Curry programs",
@@ -8,15 +8,14 @@
     "license": "BSD-3-Clause",
     "licenseFile": "LICENSE",
     "dependencies": {
-        "base"     : ">= 1.0.0, < 2.0.0",
-        "curry-ast": ">= 2.1.0, < 3.0.0",
-        "currypath": ">= 0.0.1, < 2.0.0",
-        "json"     : ">= 2.0.0, < 3.0.0",
-        "wl-pprint": ">= 0.0.1, < 2.0.0"
-    },
-    "compilerCompatibility": {
-        "pakcs": ">= 2.2.0, < 3.0.0",
-        "kics2": ">= 2.2.0, < 3.0.0"
+        "base"        : ">= 3.0.0",
+        "curry-ast"   : ">= 3.0.0, < 4.0.0",
+        "currypath"   : ">= 3.0.0, < 4.0.0",
+        "directory"   : ">= 3.0.0, < 4.0.0",
+        "filepath"    : ">= 3.0.0, < 4.0.0",
+        "json"        : ">= 3.0.0, < 4.0.0",
+        "wl-pprint"   : ">= 3.0.0, < 4.0.0",
+        "transformers": ">= 3.0.0, < 4.0.0"
     },
     "executable": {
         "name": "curry-stylecheck",

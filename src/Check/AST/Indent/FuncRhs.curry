@@ -5,23 +5,24 @@ import Curry.Span
 import Curry.Position
 import Curry.Types
 import Text.Pretty
+import Control.Monad ( unless )
 
 import Types
 
---applies actual check on functionDeclarations equations
+-- Applies actual check on function declarations.
 checkRhs :: Decl a -> Int -> CSM ()
 checkRhs e _ =
   case e of
     (FunctionDecl sI _ _ eqs) -> checkRhs' sI eqs
     _                         -> return ()
 
--- get rhs of equations and check the alignment of their root (either guards or equal
--- signs), the alignement within a rhs is checked by their respective checks
--- however
+-- Gets `rhs` of equations and checks the alignment of their root (either guards or equal
+-- signs), the alignement within an rhs is checked by their respective checks
+-- however.
 checkRhs' :: SpanInfo -> [Equation a] -> CSM ()
 checkRhs' (SpanInfo sp _) eqs = do
   let (rhs:rhss) = map getRhs eqs
-  unlessM (checkAlign getCol (getCol (getSpanInfo rhs)) rhss)
+  unless (checkAlign getCol (getCol (getSpanInfo rhs)) rhss)
           (report (Message
                       sp
                       ( colorizeKey "guards"
@@ -37,8 +38,8 @@ checkRhs' (SpanInfo sp _) eqs = do
                       )
                 )
             )
+checkRhs' NoSpanInfo _ = return ()
 
--- returns rhs of a equation
+-- Returns right-hand side of a equation.
 getRhs :: Equation a -> Rhs a
-getRhs (Equation _ _ rhs) = rhs
-
+getRhs (Equation _ _ _ rhs) = rhs

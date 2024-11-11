@@ -1,10 +1,10 @@
 module Pretty.ShowOptions where
 
-import Pretty.ToString    (renderMessagesToString)
-import Pretty.ToJson      (renderMessagesToJson)
+import Pretty.ToString ( renderMessagesToString )
+import Pretty.ToJson   ( renderMessagesToJson )
 import Types
 
--- returns a String containing the config settings
+-- Returns a String containing the config settings.
 showOptions :: Config -> String
 showOptions (Config checks output verbosity hint code mLength) =
   "--------------------------------"
@@ -16,19 +16,21 @@ showOptions (Config checks output verbosity hint code mLength) =
   ++ "\nmaximal linelength: " ++ (show mLength)
   ++ "\nlist of checks: " ++ (showCheckList checks)
 
--- details verbosity level
+-- Details verbosity level.
 showVerbosity :: Int -> String
-showVerbosity 0 = "quiet, only show check warnings"
-showVerbosity 1 = "default, enable showing hints and code part, segment output of each file"
-showVerbosity 2 = "verbose, INFO and WARNING messages concerning progress of the tool are shown"
-showVerbosity 3 = "debug, show options"
+showVerbosity v = case v of 
+  0 -> "quiet, only show check warnings"
+  1 -> "default, enable showing hints and code part, segment output of each file"
+  2 -> "verbose, INFO and WARNING messages concerning progress of the tool are shown"
+  3 -> "debug, show options"
+  _ -> "unknown verbosity level"
 
--- return on and off instead of true and false
+-- Returns "on" and "off" instead of `True` and `False`.
 showBool :: Bool -> String
-showBool True = "on"
+showBool True  = "on"
 showBool False = "off"
 
--- renders checklist
+-- Renders checklist.
 showCheckList :: CheckList -> String
 showCheckList (CheckList lineLength
                          tab

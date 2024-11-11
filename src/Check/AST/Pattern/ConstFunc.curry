@@ -9,7 +9,10 @@ import Text.Pretty
 
 import Types
 
--- in case of lambda function \x y -> x
+import Control.Applicative ( when )
+
+-- Checks if the lambda function `\x y -> x` occurs in the code.
+-- If so, a warning is emitted to use `const` instead.
 checkConstFunc :: Expression a -> Int -> CSM ()
 checkConstFunc e _ =
   case e of
@@ -17,7 +20,7 @@ checkConstFunc e _ =
       sI
       [ (VariablePattern _ _ ident1)
       , (VariablePattern _ _ ident2)]
-      (Variable _ _ (QualIdent _ _ ident3))) -> do whenM (ident1 == ident3)
+      (Variable _ _ (QualIdent _ _ ident3))) -> do when (ident1 == ident3)
                                                      (report ( Message
                                                                (getSpan sI)
                                                                ( text "superfluous code"
@@ -30,7 +33,7 @@ checkConstFunc e _ =
                                                                )
                                                              )
                                                      )
-                                                   whenM (ident3 == ident2)
+                                                   when (ident3 == ident2)
                                                      (report ( Message
                                                                (getSpan sI)
                                                                ( text "superfluous code"

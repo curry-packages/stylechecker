@@ -9,8 +9,8 @@ import Text.Pretty
 
 import Types
 
--- if not (a = b) or not (a /= b) used, recommend /= or ==
--- -- NOTE: add not ((==) a b)
+-- If `not (a = b)` or `not (a /= b)` is used, `/=` or `==` is recommended instead.
+-- -- NOTE: add `not ((==) a b)`
 checkNotEqual :: Expression a -> Int -> CSM ()
 checkNotEqual e _ =
   case e of
@@ -58,8 +58,8 @@ checkNotEqual e _ =
                 (Ident _ "/=" _)
               )
             )
-          exp1)
-        exp2)))
+          _)
+        _)))
       -> report (Message
                   (getSpan sI)
                   (text "Do not use" <+> colorizeKey "not ((/=) a b)")
@@ -76,8 +76,8 @@ checkNotEqual e _ =
                 (Ident _ "==" _)
               )
             )
-          exp1)
-        exp2)))
+          _)
+        _)))
       -> report (Message
                   (getSpan sI)
                   (text "Do not use" <+> colorizeKey "not ((==) a b)")

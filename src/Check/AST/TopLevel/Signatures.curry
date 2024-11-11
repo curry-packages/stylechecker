@@ -7,18 +7,16 @@ import Curry.Span
 import Curry.Position
 import Curry.Types
 import Curry.Ident
+import Control.Monad ( unless )
 
 import Types
 
--- applies actual check on Module
+-- Applies actual check on `Module`.
 checkTopLevelSig :: Module a -> Int -> CSM ()
-checkTopLevelSig e _ =
-  case e of
-    (Module _ _ _ _ _ decls) -> checkTopLevelSig' decls decls
-    _                        -> return ()
+checkTopLevelSig (Module _ _ _ _ _ _ decls) _ = checkTopLevelSig' decls decls
 
--- check for each declaration if they have a corresponding signature
--- if it is not a declaration (typesig), ignore
+-- Checks for each declaration if they have a corresponding signature.
+-- If it is not a declaration (typesig), ignore.
 checkTopLevelSig' :: [Decl a] -> [Decl a] -> CSM ()
 checkTopLevelSig' []           _        = return ()
 checkTopLevelSig' (decl:decls) allDecls =
@@ -28,7 +26,7 @@ checkTopLevelSig' (decl:decls) allDecls =
       _ _ _) ->
       do
         pair <- checkPair decl allDecls
-        unlessM (pair)
+        unless (pair)
           ( report (Message
                        s
                        ( colorizeKey "type signature"
@@ -43,43 +41,40 @@ checkTopLevelSig' (decl:decls) allDecls =
     _        ->
       checkTopLevelSig' decls allDecls
 
--- check if Decl has a signature in the list of decls of module,
+-- Checks if Decl has a signature in the list of decls of module,
 -- by goung through each declaration in module,
--- if so, return true and check the postition
+-- if so, returns true and checks the position.
 checkPair :: Decl a -> [Decl a] -> CSM Bool
-checkPair _ []                 = return False
-checkPair fD@(FunctionDecl
-               sIF
-               _
-               (Ident _ s _)
-               _) (decl:decls) =
-  case decl of
+checkPair _ []           = return False
+checkPair d (decl:decls) = case d of
+  fD@(FunctionDecl sIF _ (Ident _ s _) _) -> case decl of
     (TypeSig sIT i _) -> if (s == getIdentS (head i))
                            then do checkPos sIF sIT s
                                    return True
                            else checkPair fD decls
     _                 -> checkPair fD decls
+  _ -> return False
 
--- check if from two spaninfos, if one construct is ending a line above
--- where the second one starts
+-- Checks if from two spaninfos, whether or not one construct is ending
+-- a line above where the second one starts.
 checkPos :: SpanInfo -> SpanInfo -> String -> CSM ()
-checkPos (SpanInfo (Span (Position lF cF) eP) _)
-         (SpanInfo (Span _ (Position lT cT)) _)
-         s =
-  unlessM (lT == (lF-1))
-  (report (Message
-            (Span (Position lF cF) eP)
-            ( colorizeKey "type signature" <+> text "wrong position")
-            ( colorizeKey "type signature"
-              <+> text "of"
-              <+> colorizeKey s
-              <+> text "should be placed directly above its"
-              <+> colorizeKey "function declaration"
-            )
-            )
+checkPos s1 s2 s = case (s1, s2) of 
+  ((SpanInfo (Span (Position lF cF) eP) _), 
+   (SpanInfo (Span _  (Position lT _)) _)) -> 
+    unless (lT == (lF-1))
+    (report (Message
+              (Span (Position lF cF) eP)
+              ( colorizeKey "type signature" <+> text "wrong position")
+              ( colorizeKey "type signature"
+                <+> text "of"
+                <+> colorizeKey s
+                <+> text "should be placed directly above its"
+                <+> colorizeKey "function declaration"
+              )
+              )
+    )
+  _ -> return ()
 
-  )
-
--- gets string (name) from Indent
+-- Extracts string (name) from Indent.
 getIdentS :: Ident -> String
 getIdentS (Ident _ s _) = s

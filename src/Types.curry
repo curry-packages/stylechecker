@@ -7,12 +7,14 @@ import Curry.Span
 import Curry.Ident
 import Text.Pretty
 
-import State
+import Control.Monad.Trans.State ( State, get, modify )
 
--- a line of String with an index
+import Prelude hiding ( ifThenElse )
+
+-- A line of String with an index.
 type SrcLine = (Int, String)
 
--- flag type for commandline operations
+-- Flag type for commandline operations.
 data Flag
   = Ignore String
   | Add String
@@ -25,7 +27,7 @@ type ProgramName = String
 
 type Arguments = (ProgramName, [Flag], [String])
 
--- part of config, records which checks are on/off
+-- Part of config, records which checks are on/off.
 data CheckList = CheckList
                  { lineLength        :: Bool
                  , tab               :: Bool
@@ -58,7 +60,7 @@ data CheckList = CheckList
                  , instanceIndent    :: Bool
                  } deriving (Show)
 
--- checks if any of the AST checks are on in config
+-- Checks if any of the AST checks are on in config.
 anyAST :: Config -> Bool
 anyAST con =
   let c = (checks con)
@@ -90,7 +92,7 @@ anyAST con =
        , instanceIndent    c
        ]
 
--- checks if any of the Src checks are on in config
+-- Checks if any of the Src checks are on in config.
 anySrc :: Config -> Bool
 anySrc con =
   let c = (checks con)
@@ -101,7 +103,7 @@ anySrc con =
        , whiteSpace  c
        ]
 
--- record that is a compilation of all checks (of different types) on the AST
+-- Record that is a compilation of all checks (of different types) on the AST.
 data Checks a = Checks
                 { modu          :: (Module a -> Int -> CSM ())
                 , decl          :: (Decl a -> Int -> CSM ())
@@ -113,11 +115,11 @@ data Checks a = Checks
                 , alt           :: (Alt a -> Int -> CSM ())
                 }
 
--- output types
+-- Output types
 data OutPut = JSON | TEXT
   deriving (Show)
 
--- config record has a checklist and a maxLineLength
+-- Config record has a checklist and a maxLineLength.
 data Config = Config
               { checks         :: CheckList
               , oType          :: OutPut
@@ -127,81 +129,93 @@ data Config = Config
               , maxLineLength  :: Int
               }
 
--- message with relevant span and a warning-doc and hint-doc
+-- Message with relevant span and a warning-doc and hint-doc.
 data Message = Message Span Doc Doc
 
--- compare by line and if same, column
+-- Compare by line and if same, column.
 instance Ord Message where
-  (<=) (Message (Span (Position l1 c1) _) _ _)
-       (Message (Span (Position l2 c2) _) _ _)
-       = l1 < l2 || (l1 == l2) && (c1 <= c2)
-
--- only equal if line and column are the same
+  (Message sp1 _ _) <= (Message sp2 _ _) = case (sp1, sp2) of 
+    (Span (Position l1 c1) _,
+     Span (Position l2 c2) _) -> l1 < l2 || (l1 == l2) && (c1 <= c2)
+    _ -> error "Ord Message: NoSpan"
+       
+-- Only equal if line and column are the same.
 instance Eq Message where
-  (==) (Message (Span (Position l1 c1)_) _ _)
-       (Message (Span (Position l2 c2)_) _ _)
-       = (l1 == l2) && (c1 == c2)
+  (Message sp1 _ _) == (Message sp2 _ _) = case (sp1, sp2) of 
+    (Span (Position l1 c1) _, (Span (Position l2 c2) _)) 
+      -> l1 == l2 && c1 == c2
+    _ -> error "Eq Message: NoSpan"
 
--- state that has a filename, a config and a list of messages
+-- State that has a filename, a config and a list of messages.
 data CheckState = CheckState { fileName :: String
                              , config :: Config
                              , messages :: [Message]
                              }
 
--- checkstatemonad
+-- Checkstate monad.
 type CSM = State CheckState
 
--- add messages to the message list in CSM
+-- Adds messages to the message list in CSM.
 report :: Message -> CSM ()
 report m = modify $ \cs -> cs { messages = m : messages cs }
 
--- return config from CSM
+-- Returns config from CSM.
 getConfig :: CSM Config
 getConfig = do s <- get
                return $ config s
 
--- return checklist (from config) from CSM
+-- Returns checklist (from config) from CSM.
 getCheckList :: CSM CheckList
 getCheckList = do c <- getConfig
                   return $ checks c
 
--- class that is traversed (checkChildren) and checked in checkAST
+-- Class that is traversed (checkChildren) and checked in checkAST.
 class Checkable c where
-  -- applies right checks on construct and traverse the children by passing
-  -- indentation edge (Int) and checks on to checkChildren
+  -- Applies right checks on construct and traverse the children by passing
+  -- indentation edge (Int) and checks on to checkChildren.
   checkNode :: Checks a -> Int -> c a -> CSM ()
-  -- actually uses patternmatching to get children,
-  -- recalculate new edge for each and pass these and the checks on to them
+  -- Actually uses patternmatching to get children,
+  -- recalculates new edge for each and passes these and the checks on to them.
   checkChildren :: Int -> Checks a -> c a -> CSM ()
 
--- return startcolumn of Spaninfo
+-- Returns startcolumn of Spaninfo.
 getCol :: SpanInfo -> Int
-getCol (SpanInfo (Span (Position _ cp) _) _) = cp
+getCol sp = case sp of 
+  (SpanInfo (Span (Position _ cp) _) _) -> cp
+  _ -> error "getCol: NoSpan"
 
--- return startline of Spaninfo
+-- Returns startline of Spaninfo.
 getLi :: SpanInfo -> Int
-getLi (SpanInfo (Span (Position lp _) _) _) = lp
+getLi sp = case sp of
+  (SpanInfo (Span (Position lp _) _) _) -> lp
+  _ -> error "getLi: NoSpan"
 
--- return endline of Spaninfo
+-- Returns endline of Spaninfo.
 getEndLi :: SpanInfo -> Int
-getEndLi (SpanInfo (Span _ (Position lp _)) _) = lp
+getEndLi sp = case sp of
+  (SpanInfo (Span _ (Position lp _)) _) -> lp
+  _ -> error "getEndLi: NoSpan"
 
--- return first argument (a Span) from Spaninfo
+-- Returns first argument (a Span) from Spaninfo.
 getSpan :: HasSpanInfo a => a -> Span
 getSpan x = let (SpanInfo s _) = getSpanInfo x
             in s
 
--- return startline of Span
+-- Returns startline of Span.
 getSpanLi :: Span -> Int
-getSpanLi (Span (Position l _) _) = l
+getSpanLi sp = case sp of 
+  (Span (Position l _) _) -> l
+  _ -> error "getSpanLi: NoSpan"
 
--- return endline of Span
+-- Returns endline of Span.
 getSpanCol :: Span -> Int
-getSpanCol (Span (Position _ c) _) = c
+getSpanCol sp = case sp of
+  (Span (Position _ c) _) -> c
+  _ -> error "getSpanCol: NoSpan"
 
--- true if list of HasSpanInfo are aligned with an int
+-- Returns `true` if list of `HasSpanInfo` are aligned with an int
 -- at a given position (by passing a
--- function that selects the relevant int from the Spaninfos)
+-- function that selects the relevant int from the Spaninfos).
 checkAlign :: HasSpanInfo a => (SpanInfo -> Int) -> Int -> [a] -> Bool
 checkAlign f c (a:as@(_:_)) =
   (c == (f (getSpanInfo a))) && checkAlign f (f (getSpanInfo a)) as
@@ -209,16 +223,17 @@ checkAlign f c [a]          = (c == (f (getSpanInfo a)))
 checkAlign _ _ []           = True
 
 spanAlign :: [Span] -> Bool
-spanAlign (_:[])                                                   = True
-spanAlign []                                                       = True
-spanAlign ((Span (Position _ c0) _):b@(Span (Position _ c2) _):bs) =
-  (c0 == c2) && spanAlign (b:bs)
+spanAlign (_:[])   = True
+spanAlign []       = True
+spanAlign (a:b:bs) = case (a,b) of 
+  ((Span (Position _ c0) _), (Span (Position _ c2) _)) -> (c0 == c2) && spanAlign (b:bs)
+  _ -> False
 
--- make a String and colorizing function to a colorized Doctype
+-- Creates a colorized Doctype from a String and colorizing function.
 colorizeText :: (Doc -> Doc) -> String -> Doc
 colorizeText c s = c $ text s
 
--- colorize with colorizeKey
+-- Colorizes a stromg with colorizeKey.
 colorizeKey :: String -> Doc
 colorizeKey = colorizeText (\ s -> text "`" <> s <> text "`")
 
@@ -226,23 +241,24 @@ colorizeKey = colorizeText (\ s -> text "`" <> s <> text "`")
 -- keyColor :: (Doc -> Doc)
 -- keyColor = cyan
 
--- returns relevant parts for pattern checks in infix compare checks (spaninfo, lefthandside,
--- operation, righthandside)
+-- Returns relevant parts for pattern checks in infix compare checks (spaninfo, lefthandside,
+-- operation, righthandside).
 checkInfixCompare :: Expression a -> (SpanInfo, Expression a, String, Expression a)
-checkInfixCompare
-    (InfixApply
-      sI
-      exp1
-      (InfixOp _
-        (QualIdent _ _
-          (Ident _ op _)))
-      exp2)
-    = (sI, exp1, op, exp2)
+checkInfixCompare e = case e of
+  (InfixApply
+    sI
+    exp1
+    (InfixOp _
+      (QualIdent _ _
+        (Ident _ op _)))
+    exp2)
+    -> (sI, exp1, op, exp2)
+  _ -> error "checkInfixCompare: not an infix expression"
 
--- returns relevant parts for pattern checks in compare checks (spaninfo,
--- operation, first expression, second expression)
+-- Returns relevant parts for pattern checks in compare checks (spaninfo,
+-- operation, first expression, second expression).
 checkApplyCompare :: Expression a -> (SpanInfo, String, Expression a, Expression a)
-checkApplyCompare
+checkApplyCompare e = case e of
   (Apply sI
     (Apply _
       (Variable _ _
@@ -252,4 +268,5 @@ checkApplyCompare
       )
       exp1)
     exp2)
-    = (sI, op, exp1, exp2)
+    -> (sI, op, exp1, exp2)
+  _ -> error "checkApplyCompare: not an apply expression"

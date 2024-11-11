@@ -6,21 +6,23 @@ import Curry.Position
 import Curry.Types
 import Text.Pretty
 
+import Control.Monad ( unless )
+
 import Types
 
--- applies actual check on Case constructs
+-- Applies actual check on `Case` constructs.
 checkCase :: Expression a -> Int -> CSM ()
 checkCase e i =
   case e of
-    (Case sI t expr alts) -> checkCase' sI alts i
-    _                     -> return ()
+    (Case sI _ _ _ alts) -> checkCase' sI alts i
+    _                    -> return ()
 
--- check alignment of arrows and case alternatives.
--- if alternatives are aligned,
--- check indentation
+-- Checks alignment of arrows and case alternatives.
+-- If alternatives are aligned, indentation is checked.
 checkCase' :: SpanInfo -> [Alt a] -> Int -> CSM ()
+checkCase' _  []         _ = return ()
 checkCase' sI (alt:alts) i = do
-  unlessM (checkAlign getAltArrowCol (getAltArrowCol (getSpanInfo alt)) alts)
+  unless (checkAlign getAltArrowCol (getAltArrowCol (getSpanInfo alt)) alts)
     $ report (Message (getSpan sI)
                 ((colorizeKey "case") <+> text "arrows not aligned") (text "align the arrows"))
   if checkAlign getCol (getCol (getSpanInfo alt)) alts
@@ -28,13 +30,13 @@ checkCase' sI (alt:alts) i = do
     else report (Message (getSpan sI)
                   ((colorizeKey "case") <+> text "options not aligned") (text "align the options"))
 
--- alternatives should be in the next line from case, and indented by 2 from
--- outer edge or case
+-- Alternatives should be in the next line from case, and indented by 2 from
+-- outer edge or case.
 altIndent :: SpanInfo -> Alt a -> Int -> CSM ()
 altIndent sI alt i =
   let cAlt = (getCol (getSpanInfo alt))
   in
-    unlessM ((cAlt == ((getCol sI)+2)) || (cAlt == (i+2)))
+    unless ((cAlt == ((getCol sI)+2)) || (cAlt == (i+2)))
       $ report (Message (getSpan sI)
                   ( (colorizeKey "case") <+> text "options wrong indention")
                   ( text "start alternatives in next line and indent by 2 spaces from"
@@ -44,7 +46,8 @@ altIndent sI alt i =
                     <+> colorizeKey "case"
                     <+> text "is the topmost control structur from start of line"))
 
---gets column positions of an arrow in a alternativ in case
+-- Gets column positions of an arrow in a alternativ in `Case`.
 getAltArrowCol :: SpanInfo -> Int
-getAltArrowCol (SpanInfo _ [Span (Position _ c) _]) = c
-
+getAltArrowCol sp = case sp of
+  (SpanInfo _ [Span (Position _ c) _]) -> c
+  _ -> error "getAltArrowCol: NoSpan"

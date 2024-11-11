@@ -1,50 +1,49 @@
 module Main where
 
-import System             (getProgName, getArgs)
-import System.CurryPath   (lookupModuleSourceInLoadPath, stripCurrySuffix)
-import Directory          (doesFileExist, getHomeDirectory)
-import FilePath           ( (</>) )
+import System.Environment ( getProgName, getArgs )
+import System.CurryPath   ( lookupModuleSourceInLoadPath, stripCurrySuffix )
+import System.Directory   ( doesFileExist, getHomeDirectory )
+import System.FilePath    ( (</>) )
+import Control.Monad      ( when )
 
-import Curry.Files        (readFullAST)
+import Curry.Files        ( readFullAST )
 import Curry.Types
 import Curry.Position
 import Curry.SpanInfo
 import Curry.Span
 import Curry.Ident
 
-import Parse.CommandLine  (parseOpts, usageText)
-import Parse.Config       (parseConfig, defaultConfig)
-import State
+import Parse.CommandLine         ( parseOpts, usageText )
+import Parse.Config              ( parseConfig, defaultConfig )
+import Control.Monad.Trans.State 
 import Types
 import Check
-import Pretty.ToString    (renderMessagesToString)
-import Pretty.ToJson      (renderMessagesToJson)
-import Pretty.ShowOptions (showOptions)
+import Pretty.ToString           ( renderMessagesToString )
+import Pretty.ToJson             ( renderMessagesToJson )
+import Pretty.ShowOptions        ( showOptions )
 
---TODO: structur to be renamed
---ERROR: Unknown unqualified symbol: Module
---ERROR: ReadShowTerm.readUnqualifiedTerm: no parse
+import Prelude hiding ( ifThenElse )
 
 -- Banner of this tool:
 scBanner :: String
 scBanner = unlines [bannerLine,bannerText,bannerLine]
  where
-   bannerText = "Curry Style Checker (Version of 22/10/2019)"
+   bannerText = "Curry Style Checker (Version of 30/10/2024)"
    bannerLine = take (length bannerText) (repeat '-')
 
 -- URL containing Curry style guide:
 styleGuideURL :: String
 styleGuideURL = "http://www.informatik.uni-kiel.de/~curry/style/"
 
---commandline
+-- Commandline tool.
 main :: IO ()
 main = getCheckOpts >>= styleCheck
 
---start programm with arguments from commandline,
---if the file to check is found, find config, if specified in
---commandlineoptions. If config not used or not found, use defaultConfig
---get spanAST and src of code and run checkAll on these two files,
---returned String (Messages) are put into console output
+-- Starts programm with arguments from commandline,
+-- if the file to check is found, finds config, if specified in
+-- commandlineoptions. If config not used or not found, uses defaultConfig.
+-- Gets `spanAST` and src of code and runs checkAll on these two files,
+-- returned String (Messages) are put into console output.
 styleCheck :: Arguments -> IO ()
 styleCheck a@(_, flags, _) = do
   config <- getConfig flags >>= updateConfigWithOpts flags
@@ -79,13 +78,13 @@ styleCheck' (p, o, (fileName:files)) config  = do
       restrict config 0 $ messages ++"\n"
       styleCheck' (p, o, files) config
 
--- determines output function by configuration
+-- Determines output function by configuration.
 getOutputOption :: Config -> (Config -> String -> [SrcLine] -> [Message] -> String)
 getOutputOption c = case oType c of
   JSON -> renderMessagesToJson
   TEXT -> renderMessagesToString
 
--- update config after reading the currystylecheckrc by updating according to the flag
+-- Updates config after reading the currystylecheckrc by updating according to the flag.
 updateConfigWithOpts :: [Flag] -> Config -> IO Config
 updateConfigWithOpts []     conf = return conf
 updateConfigWithOpts (f:fs) conf@(Config checks out verb hint code maxLength) = case f of
@@ -103,12 +102,11 @@ updateConfigWithOpts (f:fs) conf@(Config checks out verb hint code maxLength) = 
     updateConfigWithOpts fs (conf {verbosity = (if ((i < 4) && (i > -1)) then i else 1)})
   _                       -> updateConfigWithOpts fs conf
 
--- update one check according to given string (check name) and bool
+-- Updates one check according to given string (check name) and bool.
 updateChecks :: String -> CheckList -> Bool -> Config -> IO CheckList
 updateChecks s checkl b c = case s of
   "tabs"              -> return checkl {tab = b}
   "lineLength"        -> return checkl {lineLength = b}
-  "tabs"              -> return checkl {tab = b}
   "ifThenElse"        -> return checkl {ifThenElse = b}
   "case"              -> return checkl {caseIndent = b}
   "do"                -> return checkl {doIndent = b}
@@ -143,18 +141,18 @@ updateChecks s checkl b c = case s of
                                 ++ "´, passing over" )
                             return checkl
 
--- only print s if the current verbosity isn't lower than its restriction
+-- Only print `s` if the current verbosity isn't lower than its restriction.
 restrict :: Config -> Int -> String -> IO ()
-restrict conf i s = whenM ((verbosity conf) >= i)
-                          (putStrLn s)
+restrict conf i s = when ((verbosity conf) >= i)
+                         (putStrLn s)
 
 ------------------------------------------------------------------------------
 -- Name of the config file for the style checker.
 configFileName :: String
 configFileName = "currystylecheckrc"
 
--- loads currystylecheckrc first from local directory, if not existing
--- from home and at last creates a default configuration
+-- Loads currystylecheckrc first from local directory, if not existing
+-- from home and at last creates a default configuration.
 getConfig :: [Flag] -> IO Config
 getConfig flags = do
   iconfig <- updateConfigWithOpts flags defaultConfig
@@ -173,30 +171,29 @@ getConfig flags = do
                                ++ " using default settings"
           return defaultConfig
 
---gets filename and config,
---if any check on AST is on (config), then get the Ast of the programm
---if the curry file has a suffix .curry, remove it to find corresponding
---AST
---if no check needed, return an empty module to avoid reading time of SpanAST
+-- Gets filename and config,
+-- if any check on AST is on (config), then get the Ast of the programm
+-- if the curry file has a suffix .curry, remove it to find corresponding
+-- AST.
+-- If no check needed, returns an empty module to avoid reading time of SpanAST.
 getAST :: String -> Config -> IO (Module ())
 getAST fileName config =
   if (anyAST config)
     then do restrict config 2 $ "INFO: Getting SpanAST of " ++ fileName
             ast <- readFullAST fileName
-            const done $!! ast
-            return ast
-    else return (Module
+            const (return ast) $!! ast
+    else return $ Module
                   (SpanInfo (Span (Position 1 1) (Position 1 1)) [])
+                  WhitespaceLayout
                   []
                   (ModuleIdent NoSpanInfo ["NoAST"])
                   Nothing
                   []
                   []
-                )
 
---gets filename and config, if any check on src is on (config),
---return the sourcecode in form of a list of lines, which
---are indexed strings
+-- Gets filename and config, if any check on src is on (config),
+-- return the sourcecode in form of a list of lines, which
+-- are indexed strings.
 getSrc :: String -> Config -> IO [(Int,String)]
 getSrc fileName config =
   if (anySrc config)
@@ -206,8 +203,8 @@ getSrc fileName config =
             return $ filter (\(_,l) -> (length l) > 0) src
     else return []
 
--- Retrieve the programmname and commandline arguments,
--- parse and return name, flags and further informations
+-- Retrieves the program's name and commandline arguments,
+-- parses and returns name, flags and further informations.
 getCheckOpts :: IO Arguments
 getCheckOpts = do
   args  <- getArgs

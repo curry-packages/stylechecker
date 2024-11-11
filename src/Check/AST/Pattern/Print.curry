@@ -9,7 +9,7 @@ import Text.Pretty
 
 import Types
 
--- find pattern putStrLn (show a) and recommend print instead
+-- Finds pattern `putStrLn (show a)` and recommends `print` instead.
 checkPrint :: Expression a -> Int -> CSM ()
 checkPrint e _ =
   case e of

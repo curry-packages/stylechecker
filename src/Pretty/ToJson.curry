@@ -1,8 +1,7 @@
 module Pretty.ToJson where
 
-import List (intercalate)
-import Char (isSpace)
-import Float (i2f)
+import Data.List  ( intercalate )
+import Data.Char  ( isSpace )
 
 import Curry.Types
 import Curry.Position
@@ -13,11 +12,13 @@ import JSON.Pretty
 
 import Types
 
--- takes a list of messages and transforms into a single Json-Object for output
-renderMessagesToJson :: Config -> String -> [SrcLine] -> [Message] -> String
-renderMessagesToJson conf name src ms = ppJSON $ JArray $ map (toJson conf name src) ms
+import Prelude hiding ( empty )
 
--- renders a single message with fields:
+-- Takes a list of messages and transforms into a single Json-Object for output.
+renderMessagesToJson :: Config -> String -> [SrcLine] -> [Message] -> String
+renderMessagesToJson conf name src = ppJSON . JArray . map (toJson conf name src)
+
+-- Renders a single message with fields:
 -- [ ("file" : string),
 --   ("span" :
 --     ("from" :
@@ -28,28 +29,26 @@ renderMessagesToJson conf name src ms = ppJSON $ JArray $ map (toJson conf name 
 --   ("hint" : string)
 -- ]
 toJson :: Config -> String -> [SrcLine] -> Message -> JValue
-toJson conf name src (Message (Span (Position l1 c1) (Position l2 c2)) sW sH) =
-  JObject [ ("file", JString name)
-          , ("span", JObject [ ("from", JObject [ ("line" , JNumber (i2f l1))
-                                                , ("column", JNumber (i2f c1))])
-                             , ("to", JObject [ ("line" , JNumber (i2f l2))
-                                              , ("column", JNumber (i2f c2))])
-                             ])
-          , ("warning", JString (pPrint (warningToDoc sW)))
-          ,("hint", JString (pPrint (hintToDoc conf sH)))
-          ]
+toJson conf name _ m = case m of 
+  (Message (Span (Position l1 c1) (Position l2 c2)) sW sH) ->
+    JObject [ ("file", JString name)
+            , ("span", JObject [ ("from", JObject [ ("line" ,  JNumber (toFloat l1))
+                                                  , ("column", JNumber (toFloat c1))])
+                               , ("to",   JObject [ ("line" ,  JNumber (toFloat l2))
+                                                  , ("column", JNumber (toFloat c2))])
+                               ])
+            , ("warning", JString (pPrint (warningToDoc sW)))
+            , ("hint",    JString (pPrint (hintToDoc conf sH)))
+            ]
+  _ -> error "toJson: Invalid Span"
 
---return Doc with formatted Warning
+-- Returns Doc with formatted warning.
 warningToDoc :: Doc -> Doc
 warningToDoc sW = text "Warning" <> text ":"
                      <+> sW
 
---return Doc with formatted Hint
+-- Return Doc with formatted hint.
 hintToDoc :: Config -> Doc -> Doc
 hintToDoc conf sH = if (hints conf)
-                         then text "Hint"
-                              <> text ":"
-                              <+> sH
-                              else empty
-
-
+                      then text "Hint:" <+> sH
+                      else empty

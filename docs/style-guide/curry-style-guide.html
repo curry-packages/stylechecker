@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Björn Peemöller, Michael Hanus" />
+  <meta name="dcterms.date" content="2019-09-04" />
+  <title>Curry Style Guide</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <style type="text/css">
+
+    /* Set a different font size so the page doesn't look too much
+       like plain HTML */
+    body {
+      font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+      font-size: 100%;
+    }
+
+    /* Add a rounded border and some padding to code examples */
+    pre {
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    code {
+      padding: 2px;
+    }
+
+    /* Title and section borders */
+    h1.title {
+      border-bottom: 1px solid lightgray;
+    }
+
+    h1:not(.title) {
+      border-bottom: 1px dotted gray;
+      margin-top: 40px;
+    }
+
+    /* If the screen resolution is bigger than 1000px, display the navigation
+       left of the content in a fixed container */
+    @media screen and (min-width: 1000px) {
+      body {
+        padding-left: 355px;
+      }
+
+      #TOC {
+        width: 340px;
+        position: fixed;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        margin-right: 10px;
+        overflow-y: auto;
+        background-color: #F9F9F9;
+
+        -webkit-box-shadow: 3px 0px 10px 0px rgba(184,184,184,1);
+        -moz-box-shadow: 3px 0px 10px 0px rgba(184,184,184,1);
+        box-shadow: 3px 0px 10px 0px rgba(184,184,184,1);
+      }
+    }
+
+    /* Remove the list bullets from the navigation */
+    #TOC ul {
+      list-style-type: none;
+    }
+
+    .sourceCode { background-color: #F0F0F0 ; }
+    blockquote {
+      background: #f9f9f9;
+      border-left: 10px solid #ccc;
+      margin: 1.5em 10px;
+      padding: 0.5em 10px;
+      quotes: "\201C""\201D""\2018""\2019";
+      font-style: italic;
+    }
+    blockquote:before {
+      color: #ccc;
+      content: open-quote;
+      font-size: 4em;
+      line-height: 0.1em;
+      margin-right: 0.25em;
+      vertical-align: -0.4em;
+    }
+
+    blockquote p {
+      display: inline;
+    }
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Curry Style Guide</h1>
+<p class="author">Björn Peemöller, Michael Hanus</p>
+<p class="date">September 4, 2019</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#general-formatting"><span class="toc-section-number">1</span> General Formatting</a>
+<ul>
+<li><a href="#line-length"><span class="toc-section-number">1.1</span> Line Length</a></li>
+<li><a href="#indentation"><span class="toc-section-number">1.2</span> Indentation</a></li>
+<li><a href="#local-definitions"><span class="toc-section-number">1.3</span> Local Definitions</a></li>
+<li><a href="#blank-lines"><span class="toc-section-number">1.4</span> Blank Lines</a></li>
+<li><a href="#spaces"><span class="toc-section-number">1.5</span> Spaces</a></li>
+</ul></li>
+<li><a href="#formatting-of-specific-language-constructs"><span class="toc-section-number">2</span> Formatting of Specific Language Constructs</a>
+<ul>
+<li><a href="#module-header"><span class="toc-section-number">2.1</span> Module Header</a></li>
+<li><a href="#import-declarations"><span class="toc-section-number">2.2</span> Import Declarations</a></li>
+<li><a href="#data-declarations"><span class="toc-section-number">2.3</span> <code>data</code> Declarations</a></li>
+<li><a href="#class-declarations"><span class="toc-section-number">2.4</span> <code>class</code> Declarations</a></li>
+<li><a href="#instance-declarations"><span class="toc-section-number">2.5</span> <code>instance</code> Declarations</a></li>
+<li><a href="#deriving"><span class="toc-section-number">2.6</span> <code>deriving</code></a></li>
+<li><a href="#type-signatures"><span class="toc-section-number">2.7</span> Type Signatures</a></li>
+<li><a href="#argument-patterns"><span class="toc-section-number">2.8</span> Argument Patterns</a></li>
+<li><a href="#right-hand-side-of-functions"><span class="toc-section-number">2.9</span> Right Hand Side of Functions</a></li>
+<li><a href="#guards"><span class="toc-section-number">2.10</span> Guards</a></li>
+<li><a href="#if-then-else"><span class="toc-section-number">2.11</span> <code>if-then-else</code></a></li>
+<li><a href="#case-expressions"><span class="toc-section-number">2.12</span> <code>case</code> Expressions</a></li>
+<li><a href="#let-expressions"><span class="toc-section-number">2.13</span> <code>let</code> Expressions</a></li>
+<li><a href="#do-blocks"><span class="toc-section-number">2.14</span> <code>do</code> Blocks</a></li>
+<li><a href="#listtuple-definitions"><span class="toc-section-number">2.15</span> List/Tuple Definitions</a></li>
+<li><a href="#brackets"><span class="toc-section-number">2.16</span> Brackets</a></li>
+</ul></li>
+<li><a href="#superfluous-code"><span class="toc-section-number">3</span> Superfluous Code</a>
+<ul>
+<li><a href="#boolean"><span class="toc-section-number">3.1</span> Boolean</a></li>
+<li><a href="#ordering"><span class="toc-section-number">3.2</span> Ordering</a></li>
+<li><a href="#list"><span class="toc-section-number">3.3</span> List</a></li>
+<li><a href="#functions"><span class="toc-section-number">3.4</span> Functions</a></li>
+</ul></li>
+<li><a href="#comments"><span class="toc-section-number">4</span> Comments</a>
+<ul>
+<li><a href="#language"><span class="toc-section-number">4.1</span> Language</a></li>
+<li><a href="#top-level-declarations"><span class="toc-section-number">4.2</span> Top-Level Declarations</a></li>
+<li><a href="#end-of-line-comments"><span class="toc-section-number">4.3</span> End-of-Line Comments</a></li>
+</ul></li>
+<li><a href="#naming"><span class="toc-section-number">5</span> Naming</a></li>
+<li><a href="#compiler-warnings"><span class="toc-section-number">6</span> Compiler Warnings</a></li>
+</ul>
+</nav>
+<p>This document contains a description of the preferred style for writing Curry programs. The described style is oriented to the <a href="https://github.com/tibbe/haskell-style-guide">Haskell Style Guide von Johan Tibell</a>, but it has been adapted in various points.</p>
+<p>In principle, this style guide is a guideline from which one can deviate <em>if there are good reasons for it</em>.</p>
+<h1 data-number="1" id="general-formatting"><span class="header-section-number">1</span> General Formatting</h1>
+<h2 data-number="1.1" id="line-length"><span class="header-section-number">1.1</span> Line Length</h2>
+<p>The maximum line length is <em>80 characters</em>. <em>120 characters</em> is an alternative as modern screens allow wider lines.</p>
+<h2 data-number="1.2" id="indentation"><span class="header-section-number">1.2</span> Indentation</h2>
+<p>Tabulator stops are not allowed in source programs, since the actual indentation space of a tabulator stop might influence the semantics of the program. This is also true for other white spaces aside of spaces and line breaks. Instead, use blanks for indentation. Code blocks should be intended with <em>2 spaces</em>. Most text editors can be configured so that tabs are automatically replaced by (at most) two spaces. Most of the time bodies of constructs can be indented either by 2 from the keyword or by 2 from the outer block (in the following example the function <code class="sourceCode curry">f1</code>). If the body starts in the same line as the keyword, no indentation is required since the body should be aligned anyway.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a>f0 <span class="fu">=</span> <span class="kw">do</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a>       a</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a>       b</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a>       c</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a>f1 <span class="fu">=</span> <span class="kw">do</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a>  a</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a>  b</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a>  c</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>f2 <span class="fu">=</span> <span class="kw">do</span> a</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a>        b</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a>        c</span></code></pre></div>
+<h2 data-number="1.3" id="local-definitions"><span class="header-section-number">1.3</span> Local Definitions</h2>
+<p>The keyword <code class="sourceCode curry"><span class="kw">where</span></code> is indented by <em>one space</em> and the subsequent local definitions by a further space. Hence, the local definitions are intended, as other code blocks, by <em>2 spaces</em>. If there is only one short local definition, it can be written directly after the keyword <code class="sourceCode curry"><span class="kw">where</span></code>. Several local value definitions should be aligned at the equality symbol if they have a comparable number of parameters. Local definitions should be aligned like top-level definitions (see below):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a>main <span class="fu">=</span> <span class="kw">do</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true"></a>  line <span class="ot">&lt;-</span> <span class="fu">getLine</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true"></a>  <span class="fu">putStrLn</span> <span class="fu">$</span> answer line</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true"></a> <span class="kw">where</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true"></a>  answer s <span class="fu">=</span> <span class="st">&quot;Your input: &quot;</span> <span class="fu">++</span> s</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true"></a>f y <span class="fu">=</span> x <span class="fu">+</span> y</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true"></a> <span class="kw">where</span> x <span class="fu">=</span> <span class="dv">1</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true"></a>g x <span class="fu">=</span> x <span class="fu">+</span> val1 <span class="fu">+</span> secondVal</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true"></a> <span class="kw">where</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true"></a>  val1      <span class="fu">=</span> <span class="dv">1</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true"></a>  secondVal <span class="fu">=</span> <span class="kw">if</span> isZero x <span class="kw">then</span> <span class="dv">1</span> <span class="kw">else</span> <span class="dv">2</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true"></a>  <span class="co">-- local operation</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true"></a>  isZero x <span class="fu">|</span> x <span class="fu">==</span> <span class="dv">0</span>    <span class="fu">=</span> <span class="kw">True</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true"></a>           <span class="fu">|</span> <span class="fu">otherwise</span> <span class="fu">=</span> <span class="kw">False</span></span></code></pre></div>
+<h2 data-number="1.4" id="blank-lines"><span class="header-section-number">1.4</span> Blank Lines</h2>
+<p>There should be one blank line between two top-level definitions. There are no blank lines between type signature and the defining rules. Similarly, comments of top-level definitions are not separated from the actual definition with a blank line. Between blocks of infix declarations blank lines should however be omitted.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="co">-- f increments the argument by one</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="ot">f ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a>f x <span class="fu">=</span> x <span class="fu">+</span> <span class="dv">1</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true"></a><span class="kw">infixr</span> <span class="dv">3</span> <span class="fu">&amp;&amp;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true"></a><span class="kw">infixr</span> <span class="dv">2</span> <span class="fu">||</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true"></a><span class="kw">infixl</span> <span class="dv">1</span> <span class="fu">&gt;&gt;</span>, <span class="fu">&gt;&gt;=</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true"></a><span class="kw">infixr</span> <span class="dv">0</span> <span class="fu">$</span>, <span class="fu">$!</span>, <span class="fu">$!!</span>, <span class="fu">$#</span>, <span class="fu">$##</span>, <span class="ot">`seq`</span>, <span class="fu">&amp;</span>, <span class="fu">&amp;&gt;</span>, <span class="fu">?</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true"></a><span class="co">-- fInv decrements the argument by one</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true"></a>fInv x <span class="fu">=</span> x <span class="fu">-</span> <span class="dv">1</span></span></code></pre></div>
+<h2 data-number="1.5" id="spaces"><span class="header-section-number">1.5</span> Spaces</h2>
+<p>Trailing Spaces should be avoided. Binary operators, like <code class="sourceCode curry">(<span class="fu">++</span>)</code>, are surrounded with a single space on either side.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co">-- bad</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="st">&quot;Not&quot;</span><span class="fu">++</span><span class="st">&quot;good&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="co">-- good</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="st">&quot;Very&quot;</span> <span class="fu">++</span> <span class="st">&quot;good&quot;</span></span></code></pre></div>
+<p>It is allowed to omit the surrounding spaces from simple infix operators, like <code class="sourceCode curry">(<span class="fu">+</span>)</code>, or the infix list constructor <code class="sourceCode curry">(<span class="fu">:</span>)</code>. However, this is not required.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a>f n <span class="fu">=</span> n <span class="fu">*</span> (n<span class="fu">+</span><span class="dv">1</span>) <span class="fu">/</span> <span class="dv">2</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="fu">head</span> (x<span class="fu">:</span>_) <span class="fu">=</span> x</span></code></pre></div>
+<p>Similarly to written texts, a space follows a comma, but there is no space in front of the comma:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>aList  <span class="fu">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>aTuple <span class="fu">=</span> (<span class="kw">True</span>, <span class="st">&quot;True&quot;</span>, <span class="dv">1</span>)</span></code></pre></div>
+<p>One <em>can</em> put a space after a lambda, in particular, if there is non-variable pattern after a lambda. If there is a variable after a lambda, one can omit the space:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="fu">map</span> (<span class="fu">\</span> (_<span class="fu">:</span>_) <span class="ot">-&gt;</span> <span class="kw">True</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="fu">map</span> (<span class="fu">\</span> x <span class="ot">-&gt;</span> x <span class="fu">+</span> <span class="dv">1</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="fu">map</span> (<span class="fu">\</span>x <span class="ot">-&gt;</span> x <span class="fu">+</span> <span class="dv">1</span>)</span></code></pre></div>
+<h1 data-number="2" id="formatting-of-specific-language-constructs"><span class="header-section-number">2</span> Formatting of Specific Language Constructs</h1>
+<h2 data-number="2.1" id="module-header"><span class="header-section-number">2.1</span> Module Header</h2>
+<p>If the export list fits into one line, it can be written as follows:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="kw">module</span> <span class="dt">Set</span> (<span class="dt">Set</span>, empty) <span class="kw">where</span></span></code></pre></div>
+<p>Longer export lists should be aligned as follows:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="kw">module</span> <span class="dt">Data.Set</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a>  ( <span class="dt">Set</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a>  , empty</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a>  , singleton</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a>  , member</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a>  ) <span class="kw">where</span></span></code></pre></div>
+<p>Optional, one can also put several names into line:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="kw">module</span> <span class="dt">Data.Set</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true"></a>  ( <span class="dt">Set</span>, empty, singleton</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true"></a>  , member, union, intersect</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true"></a>  ) <span class="kw">where</span></span></code></pre></div>
+<p>If there are types exported with constructors, one should separate the type name and the constructors with a blank:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="kw">module</span> <span class="dt">Tree</span> (<span class="dt">Tree</span> (<span class="ot">..</span>), <span class="dt">BinTree</span> (<span class="dt">Leaf</span>, <span class="dt">Branch</span>)) <span class="kw">where</span></span></code></pre></div>
+<h2 data-number="2.2" id="import-declarations"><span class="header-section-number">2.2</span> Import Declarations</h2>
+<p>The list of imported modules should be ordered in the following three categories:</p>
+<ol type="1">
+<li>Standard library modules, e.g., <code class="sourceCode curry"><span class="dt">List</span></code>, <code class="sourceCode curry"><span class="dt">IO</span></code></li>
+<li>Third party libraries (often not used)</li>
+<li>Other local modules (developed with the current application)</li>
+</ol>
+<p>The list of imports in each category should be sorted alphabetically. With the exception of the prelude, all used entities from imported modules should be explicitly or <code class="sourceCode curry">qualified</code> imported. If the list of imported entities is long, one can omit this general rule.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="kw">import           </span><span class="dt">List</span>        (isInfixOf)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a><span class="kw">import qualified</span> <span class="dt">Set</span>  <span class="kw">as</span> <span class="dt">Set</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a><span class="kw">import </span><span class="dt">SecondParty.Module1</span> (fun)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a><span class="kw">import </span><span class="dt">ThirdParty.Module1</span>  ((<span class="fu">$$$</span>))</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true"></a><span class="kw">import </span><span class="dt">MyUtilsModule</span> <span class="co">-- import everything</span></span></code></pre></div>
+<h2 data-number="2.3" id="data-declarations"><span class="header-section-number">2.3</span> <code>data</code> Declarations</h2>
+<p>The constructors of a <code class="sourceCode curry"><span class="kw">data</span></code> declaration should be vertically aligned:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Tree</span> a <span class="fu">=</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true"></a>    <span class="dt">Leaf</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true"></a>  <span class="fu">|</span> <span class="dt">Branch</span> a (<span class="dt">Tree</span> a) (<span class="dt">Tree</span> a)</span></code></pre></div>
+<p>If there are only a few constructors that fits into one line, one can write the <code class="sourceCode curry"><span class="kw">data</span></code> declaration as follows:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Bit</span> <span class="fu">=</span> <span class="dt">Zero</span> <span class="fu">|</span> <span class="dt">One</span></span></code></pre></div>
+<p>Records (<code class="sourceCode curry"><span class="kw">data</span></code> declarations with named selectors) should be vertically aligned as follows:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Person</span> <span class="fu">=</span> <span class="dt">Person</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true"></a>    {<span class="ot"> firstName ::</span> <span class="dt">String</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true"></a>    ,<span class="ot"> lastName  ::</span> <span class="dt">String</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true"></a>    ,<span class="ot"> age       ::</span> <span class="dt">Int</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true"></a>    }</span></code></pre></div>
+<h2 data-number="2.4" id="class-declarations"><span class="header-section-number">2.4</span> <code>class</code> Declarations</h2>
+<p>Declarations in a class declaration should be aligned and indented.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true"></a>class <span class="dt">Example</span> a <span class="kw">where</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true"></a><span class="ot">  c1 ::</span> a</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true"></a><span class="ot">  f1 ::</span> a <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true"></a><span class="ot">  f2 ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> a</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true"></a><span class="ot">  f3 ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true"></a>  f3 <span class="fu">=</span> f1 <span class="fu">.</span> f2</span></code></pre></div>
+<h2 data-number="2.5" id="instance-declarations"><span class="header-section-number">2.5</span> <code>instance</code> Declarations</h2>
+<p>Declarations in an instance declaration should be aligned and indented similarly to class declarations.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a>instance <span class="dt">Example</span> <span class="dt">SomeConstruct</span> <span class="kw">where</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a>  c1 <span class="fu">=</span> blob</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true"></a>  f1 x <span class="fu">=</span> <span class="fu">show</span> a</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true"></a>  f2 s <span class="fu">=</span> parse s</span></code></pre></div>
+<h2 data-number="2.6" id="deriving"><span class="header-section-number">2.6</span> <code>deriving</code></h2>
+<p>The keyword <code>deriving</code> is aligned with behind the rest of the data declaration body. If the declaration is written in one line indenting by 2 in the next line is also allowed. The body of deriving should be formatted like tuple declarations.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Tree</span> a <span class="fu">=</span> <span class="dt">Leaf</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true"></a>            <span class="fu">|</span> <span class="dt">Branch</span> a (<span class="dt">Tree</span> a) (<span class="dt">Tree</span> a)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true"></a>            deriving ( <span class="dt">Show</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true"></a>                     , <span class="dt">Eq</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true"></a>                     , <span class="dt">Example</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true"></a>                     , <span class="dt">Test</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true"></a>                     , <span class="dt">Something</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true"></a>                     )</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Bit</span> <span class="fu">=</span> <span class="dt">Zero</span> <span class="fu">|</span> <span class="dt">One</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true"></a>  deriving (<span class="dt">Show</span>)</span></code></pre></div>
+<p>In records <code>deriving</code> should be written behind the closing brace.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Person</span> <span class="fu">=</span> <span class="dt">Person</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true"></a>    {<span class="ot"> firstName ::</span> <span class="dt">String</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true"></a>    ,<span class="ot"> lastName  ::</span> <span class="dt">String</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true"></a>    ,<span class="ot"> age       ::</span> <span class="dt">Int</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true"></a>    } deriving (<span class="dt">Show</span>, <span class="dt">Eq</span>, <span class="dt">Example</span>)</span></code></pre></div>
+<h2 data-number="2.7" id="type-signatures"><span class="header-section-number">2.7</span> Type Signatures</h2>
+<p>In type signatures one should put a blank before and after the function arrow <code class="sourceCode curry"><span class="ot">-&gt;</span></code>.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a><span class="fu">map</span> <span class="ot">::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [b]</span></code></pre></div>
+<p>The type signature should be written in one line if it fits. If the type signature is long or if one want to put a comment after the individual types, one should align the function arrows:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="ot">uncurry10 ::</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> c <span class="ot">-&gt;</span> d <span class="ot">-&gt;</span> e <span class="ot">-&gt;</span> f <span class="ot">-&gt;</span> g <span class="ot">-&gt;</span> h <span class="ot">-&gt;</span> i <span class="ot">-&gt;</span> j <span class="ot">-&gt;</span> k)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true"></a>          <span class="ot">-&gt;</span> (a, b, c, d, e, f, g, h, i, j)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true"></a>          <span class="ot">-&gt;</span> k</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true"></a><span class="ot">area ::</span> <span class="dt">Int</span> <span class="co">-- width</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true"></a>     <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="co">-- height</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true"></a>     <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="co">-- area</span></span></code></pre></div>
+<h2 data-number="2.8" id="argument-patterns"><span class="header-section-number">2.8</span> Argument Patterns</h2>
+<p>If an operation is defined by several rules, one should vertically align the parameters with the same position if possible:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="fu">and</span> <span class="kw">True</span> <span class="kw">True</span> <span class="fu">=</span> <span class="kw">True</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a><span class="fu">and</span> _    _    <span class="fu">=</span> <span class="kw">False</span></span></code></pre></div>
+<p>The equal signs <code class="sourceCode curry"><span class="fu">=</span></code> should also be aligned.</p>
+<h2 data-number="2.9" id="right-hand-side-of-functions"><span class="header-section-number">2.9</span> Right Hand Side of Functions</h2>
+<p>The start (e.g. <code class="sourceCode curry"><span class="fu">=</span></code>, <code class="sourceCode curry"><span class="fu">|</span></code>) of right hand sides of a function should be aligned.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a>g <span class="dt">X</span> <span class="fu">=</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true"></a>g <span class="dt">Y</span> <span class="fu">=</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true"></a>g s <span class="fu">|</span> s <span class="fu">==</span> <span class="dv">1</span>    <span class="fu">=</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true"></a>    <span class="fu">|</span> s <span class="fu">==</span> <span class="dv">2</span>    <span class="fu">=</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true"></a>    <span class="fu">|</span> <span class="fu">otherwise</span> <span class="fu">=</span> <span class="ot">..</span><span class="fu">.</span></span></code></pre></div>
+<p>The equal signs <code class="sourceCode curry"><span class="fu">=</span></code> should also be aligned.</p>
+<h2 data-number="2.10" id="guards"><span class="header-section-number">2.10</span> Guards</h2>
+<p>Guards should immediately follow the patterns or they should be indented in the following line. In any case, they should be vertically aligned:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true"></a>f x y z <span class="fu">|</span> x <span class="fu">==</span> y    <span class="fu">=</span> z</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true"></a>        <span class="fu">|</span> <span class="fu">otherwise</span> <span class="fu">=</span> z <span class="fu">+</span> <span class="dv">1</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true"></a>g x y z</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true"></a>  <span class="fu">|</span> x <span class="fu">==</span> y <span class="fu">&amp;&amp;</span> <span class="fu">not</span> z <span class="fu">=</span> <span class="dv">1</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true"></a>  <span class="fu">|</span> <span class="fu">otherwise</span>       <span class="fu">=</span> <span class="dv">0</span></span></code></pre></div>
+<p>If the conditions are very long, the equal signs can start in the next line below the condition:</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true"></a>f x y z</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true"></a>  <span class="fu">|</span> thisIsAVeryLongConditionWhichNeedsAllTheSpaceAvailableInTheLine x y z</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true"></a>  <span class="fu">=</span> <span class="dv">42</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true"></a>  <span class="fu">|</span> <span class="fu">otherwise</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true"></a>  <span class="fu">=</span> <span class="dv">0</span></span></code></pre></div>
+<p>If an operation is defined by rules with and without guards, the guards <code class="sourceCode curry"><span class="fu">|</span></code> and equal signs <code class="sourceCode curry"><span class="fu">=</span></code> should be vertically aligned:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true"></a><span class="ot">f ::</span> [a] <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> [a]</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true"></a>f []     _ <span class="fu">=</span> []</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true"></a>f (x<span class="fu">:</span>xs) n <span class="fu">|</span> n<span class="fu">&lt;=</span><span class="dv">0</span>      <span class="fu">=</span> []</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true"></a>           <span class="fu">|</span> <span class="fu">otherwise</span> <span class="fu">=</span> x <span class="fu">:</span> f xs (n<span class="dv">-1</span>)</span></code></pre></div>
+<h2 data-number="2.11" id="if-then-else"><span class="header-section-number">2.11</span> <code>if-then-else</code></h2>
+<p>As a general rule, one should try to use patterns and guards instead of <code class="sourceCode curry"><span class="kw">if</span><span class="fu">-</span><span class="kw">then</span><span class="fu">-</span><span class="kw">else</span></code> expressions. Short <code class="sourceCode curry"><span class="kw">if</span><span class="fu">-</span><span class="kw">then</span><span class="fu">-</span><span class="kw">else</span></code> expressions can be written in one line (if this fits into the maximal line length):</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true"></a>f x <span class="fu">=</span> g (<span class="kw">if</span> x <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="dv">1</span>) <span class="dv">42</span></span></code></pre></div>
+<p>Otherwise, one should indent the <code class="sourceCode curry"><span class="kw">then</span></code> and <code class="sourceCode curry"><span class="kw">else</span></code> branch, which are vertically aligned:</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true"></a>foo <span class="fu">=</span> <span class="kw">if</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true"></a>        <span class="kw">then</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true"></a>        <span class="kw">else</span> <span class="ot">..</span><span class="fu">.</span></span></code></pre></div>
+<p>If the condition is short, one can also write the <code class="sourceCode curry"><span class="kw">if</span></code> and <code class="sourceCode curry"><span class="kw">then</span></code> part in one line, but align the <code class="sourceCode curry"><span class="kw">then</span></code> and <code class="sourceCode curry"><span class="kw">else</span></code> parts:</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true"></a>foo <span class="fu">=</span> <span class="kw">if</span> <span class="ot">..</span><span class="fu">.</span> <span class="kw">then</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true"></a>             <span class="kw">else</span> <span class="ot">..</span><span class="fu">.</span></span></code></pre></div>
+<h2 data-number="2.12" id="case-expressions"><span class="header-section-number">2.12</span> <code>case</code> Expressions</h2>
+<p>The alternatives in a <code class="sourceCode curry"><span class="kw">case</span></code> expression should be aligned in the following form:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true"></a>foobar <span class="fu">=</span> <span class="kw">case</span> something <span class="kw">of</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true"></a>  <span class="kw">Just</span> j  <span class="ot">-&gt;</span> foo</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true"></a>  <span class="kw">Nothing</span> <span class="ot">-&gt;</span> bar</span></code></pre></div>
+<p>or</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true"></a>foobar <span class="fu">=</span> <span class="kw">case</span> something <span class="kw">of</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true"></a>           <span class="kw">Just</span> j  <span class="ot">-&gt;</span> foo</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true"></a>           <span class="kw">Nothing</span> <span class="ot">-&gt;</span> bar</span></code></pre></div>
+<p>The arrows <code class="sourceCode curry"><span class="ot">-&gt;</span></code> should be aligned to improve readability.</p>
+<h2 data-number="2.13" id="let-expressions"><span class="header-section-number">2.13</span> <code>let</code> Expressions</h2>
+<p>Short <code class="sourceCode curry"><span class="kw">let</span></code> expressions with a single local declaration can be written in one line (if the line is not too long):</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true"></a>squareSum x y <span class="fu">=</span> <span class="kw">let</span> z <span class="fu">=</span> x <span class="fu">+</span> y <span class="kw">in</span> z <span class="fu">*</span> z</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true"></a>grandfather g c <span class="fu">|</span> <span class="kw">let</span> f <span class="kw">free</span> <span class="kw">in</span> father g f <span class="fu">&amp;&amp;</span> father f c <span class="fu">=</span> <span class="kw">True</span></span></code></pre></div>
+<p>Long <code class="sourceCode curry"><span class="kw">let</span></code> expressions or <code class="sourceCode curry"><span class="kw">let</span></code> expressions with more then one local declaration should be aligned so that the keywords <code class="sourceCode curry"><span class="kw">let</span></code> and <code class="sourceCode curry"><span class="kw">in</span></code> are in the same column:</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true"></a>qsort (x<span class="fu">:</span>xs) <span class="fu">=</span> <span class="kw">let</span> (l,r) <span class="fu">=</span> split x xs</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true"></a>               <span class="kw">in</span> qsort l <span class="fu">++</span> (x<span class="fu">:</span>qsort r)</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true"></a></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true"></a>doubleSquareSum x y <span class="fu">=</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true"></a>  <span class="kw">let</span> z  <span class="fu">=</span> x <span class="fu">+</span> y</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true"></a>      sq <span class="fu">=</span> z <span class="fu">*</span> z</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true"></a>  <span class="kw">in</span> sq <span class="fu">+</span> sq</span></code></pre></div>
+<p>The equal signs of all local declarations should be vertically aligned. The same rule is used for <code class="sourceCode curry"><span class="kw">let</span></code> expressions in <code class="sourceCode curry"><span class="kw">do</span></code> blocks (where there is no <code class="sourceCode curry"><span class="kw">in</span></code> expression).</p>
+<h2 data-number="2.14" id="do-blocks"><span class="header-section-number">2.14</span> <code>do</code> Blocks</h2>
+<p>The statements in a <code class="sourceCode curry"><span class="kw">do</span></code> blocks should start immediately after the keyword <code class="sourceCode curry"><span class="kw">do</span></code> or they are indented in the next line:</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true"></a>echo <span class="fu">=</span> <span class="kw">do</span> name <span class="ot">&lt;-</span> <span class="fu">getLine</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true"></a>          <span class="fu">putStrLn</span> name</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true"></a>greet <span class="fu">=</span> <span class="kw">do</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true"></a>  <span class="fu">putStr</span> <span class="st">&quot;How is your name? &quot;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true"></a>  name <span class="ot">&lt;-</span> <span class="fu">getLine</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true"></a>  <span class="fu">putStrLn</span> (<span class="st">&quot;Hello &quot;</span> <span class="fu">++</span> name <span class="fu">++</span> <span class="st">&quot;!&quot;</span>)</span></code></pre></div>
+<h2 data-number="2.15" id="listtuple-definitions"><span class="header-section-number">2.15</span> List/Tuple Definitions</h2>
+<p>The element of long lists should be aligned as follows:</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true"></a>exceptions <span class="fu">=</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true"></a>  [ <span class="dt">InvalidStatusCode</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true"></a>  , <span class="dt">MissingContentHeader</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true"></a>  , <span class="dt">InternalServerError</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true"></a>  ]</span></code></pre></div>
+<p>One can also omit the first line break:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true"></a>directions <span class="fu">=</span> [ <span class="dt">North</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true"></a>             , <span class="dt">East</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true"></a>             , <span class="dt">South</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true"></a>             , <span class="dt">West</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true"></a>             ]</span></code></pre></div>
+<p>Short lists can be written in one line:</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true"></a>short <span class="fu">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span></code></pre></div>
+<p>The same rules apply to tuple definitions:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true"></a>t       <span class="fu">=</span> (<span class="dv">1</span>, <span class="kw">True</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true"></a>ignored <span class="fu">=</span> ( <span class="dt">InvalidStatusCode</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true"></a>          , <span class="dt">MissingContentHeader</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true"></a>          )</span></code></pre></div>
+<h2 data-number="2.16" id="brackets"><span class="header-section-number">2.16</span> Brackets</h2>
+<p>Superfluous brackets should be avoided:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true"></a>seven <span class="fu">=</span> <span class="dv">1</span> <span class="fu">+</span> <span class="dv">2</span> <span class="fu">*</span> <span class="dv">3</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true"></a>f x <span class="fu">=</span> <span class="kw">if</span> cond x <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="dv">1</span></span></code></pre></div>
+<p>instead of</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true"></a>seven <span class="fu">=</span> (<span class="dv">1</span> <span class="fu">+</span> (<span class="dv">2</span> <span class="fu">*</span> <span class="dv">3</span>))</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true"></a>f x <span class="fu">=</span> <span class="kw">if</span> (cond x) <span class="kw">then</span> <span class="dv">0</span> <span class="kw">else</span> <span class="dv">1</span></span></code></pre></div>
+<p>In case of specific infix operators (e.g., not defined in the prelude) or if one is not sure about the precedence or want to document the predence, one can write brackets.</p>
+<h1 data-number="3" id="superfluous-code"><span class="header-section-number">3</span> Superfluous Code</h1>
+<p>Superfluous structures are to be avoided such as unnessecary braces and expressions or combining methods get functions that are already predefined. The following guidelines are only a handful of examples.</p>
+<h2 data-number="3.1" id="boolean"><span class="header-section-number">3.1</span> Boolean</h2>
+<div class="sourceCode" id="cb41"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true"></a>f x <span class="fu">=</span> <span class="kw">if</span> (x <span class="fu">==</span> <span class="kw">True</span>) <span class="kw">then</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true"></a>f x <span class="fu">=</span> <span class="kw">if</span> x <span class="kw">then</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true"></a>f x <span class="fu">=</span> <span class="kw">if</span> x <span class="kw">then</span> <span class="kw">True</span> <span class="kw">else</span> <span class="kw">False</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true"></a>f x <span class="fu">=</span> x</span></code></pre></div>
+<h2 data-number="3.2" id="ordering"><span class="header-section-number">3.2</span> Ordering</h2>
+<div class="sourceCode" id="cb42"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">not</span> (a <span class="fu">=</span> b) <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">not</span> (a <span class="fu">/=</span> b) <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> a <span class="fu">/=</span> b <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> a <span class="fu">==</span> b <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true"></a></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">not</span> (a <span class="fu">&lt;=</span> b) <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">not</span> (a <span class="fu">&gt;</span> b) <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> a <span class="fu">&gt;</span> b <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> a <span class="fu">&lt;=</span> b <span class="ot">..</span><span class="fu">.</span></span></code></pre></div>
+<h2 data-number="3.3" id="list"><span class="header-section-number">3.3</span> List</h2>
+<div class="sourceCode" id="cb43"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> l <span class="fu">==</span> [] <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> (<span class="fu">/=</span>) [] l <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">null</span> l <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">not</span> (<span class="fu">null</span> l) <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true"></a></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">foldl</span> <span class="fu">||</span> <span class="kw">False</span> list <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">foldr</span> <span class="fu">&amp;&amp;</span> <span class="kw">True</span> list <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="dt">Or</span> list <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="dt">And</span> list <span class="ot">..</span><span class="fu">.</span></span></code></pre></div>
+<h2 data-number="3.4" id="functions"><span class="header-section-number">3.4</span> Functions</h2>
+<div class="sourceCode" id="cb44"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">\</span>x <span class="ot">-&gt;</span> x <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">id</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">\</span>x y <span class="ot">-&gt;</span> x <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">const</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true"></a></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true"></a><span class="co">-- incorrect</span></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">putStrLn</span> (<span class="fu">show</span> someString) <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true"></a><span class="co">-- correct</span></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true"></a><span class="ot">..</span><span class="fu">.</span> <span class="fu">print</span> someString <span class="ot">..</span><span class="fu">.</span></span></code></pre></div>
+<h1 data-number="4" id="comments"><span class="header-section-number">4</span> Comments</h1>
+<h2 data-number="4.1" id="language"><span class="header-section-number">4.1</span> Language</h2>
+<p>Comments should be written in correct English. The identifiers used in a program should be also meaningful in English.</p>
+<h2 data-number="4.2" id="top-level-declarations"><span class="header-section-number">4.2</span> Top-Level Declarations</h2>
+<p>All top-level operations should have a comment and a type signature. This is a must for exported operations. One should use the syntax of <a href="https://www-ps.informatik.uni-kiel.de/currywiki/tools/currydoc">CurryDoc</a> for the comments of exported operations so that the program documentation can easily be generated.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true"></a><span class="do">--- Splits the list argument into a list of lists of related adjacent</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true"></a><span class="do">--- elements.</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true"></a><span class="do">--- @param eq - the relation to classify adjacent elements</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true"></a><span class="do">--- @param xs - the list of elements</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true"></a><span class="do">--- @return the list of lists of related adjacent elements</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true"></a><span class="ot">groupBy ::</span> (a <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> <span class="dt">Bool</span>) <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [[a]]</span></code></pre></div>
+<p>The comment of an operation should contain enough information so that one can use the operation without studying its implementation.</p>
+<p>Data types should be commented in a similar way. Exported constructors should have individual comments:</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true"></a><span class="do">--- The data type for representing XML expressions.</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true"></a><span class="do">--- @cons XText - a text string (PCDATA)</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true"></a><span class="do">--- @cons XElem - an XML element with tag field, attributes, and a list</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true"></a><span class="do">---               of XML elements as contents</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">XmlExp</span> <span class="fu">=</span> <span class="dt">XText</span> <span class="dt">String</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true"></a>            <span class="fu">|</span> <span class="dt">XElem</span> <span class="dt">String</span> [(<span class="dt">String</span>,<span class="dt">String</span>)] [<span class="dt">XmlExp</span>]</span></code></pre></div>
+<p>For records with explicit selectors (labels), one should add a comment for each selector:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true"></a><span class="do">--- A natural person</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true"></a><span class="do">--- @field firstName - First name, may contain several ones</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true"></a><span class="do">--- @field lastName  - Last name</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true"></a><span class="do">--- @field height    - Height in centimeters</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">Person</span> <span class="fu">=</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true"></a>    <span class="dt">Person</span></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true"></a>      {<span class="ot"> firstName ::</span> <span class="dt">String</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true"></a>      ,<span class="ot"> lastName  ::</span> <span class="dt">String</span></span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true"></a>      ,<span class="ot"> height    ::</span> <span class="dt">Int</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true"></a>      }</span></code></pre></div>
+<h2 data-number="4.3" id="end-of-line-comments"><span class="header-section-number">4.3</span> End-of-Line Comments</h2>
+<p>Comments at the end of a line should be separated from the code by at least one space:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true"></a><span class="ot">foo ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true"></a>foo n <span class="fu">=</span> salt <span class="fu">*</span> <span class="dv">32</span> <span class="fu">+</span> <span class="dv">9</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true"></a>  <span class="kw">where</span> salt <span class="fu">=</span> <span class="dv">453645243</span>  <span class="co">-- Magic hash salt.</span></span></code></pre></div>
+<h1 data-number="5" id="naming"><span class="header-section-number">5</span> Naming</h1>
+<p>Use camel case for names that consists of several logical units (words):</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true"></a><span class="kw">data</span> <span class="dt">BankAccount</span> <span class="fu">=</span> <span class="ot">..</span><span class="fu">.</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true"></a>thisIsTheAnswer <span class="fu">=</span> <span class="dv">42</span></span></code></pre></div>
+<p>To improve readability, one should not capitalize all letters in abbreviations. For instance, one should write <code class="sourceCode curry">showXmlDoc</code> instead of <code class="sourceCode curry">showXMLDoc</code>. An exception are abbreviations with only two letters, like <code class="sourceCode curry"><span class="dt">IO</span></code>.</p>
+<p>Parameter names and names of local declarations are usually short, but one has to take the following rule into account:</p>
+<blockquote>
+<p>Entity with larger visibility regions have longer names.</p>
+</blockquote>
+<p>The name <code class="sourceCode curry">x</code> can be used in a one-line operation but never as a top-level declaration.</p>
+<p>One should also take into account the following <em>conventions for short names</em>:</p>
+<ul>
+<li><p><code class="sourceCode curry">f</code> denotes an operation of type <code class="sourceCode curry">a <span class="ot">-&gt;</span> b</code></p></li>
+<li><p><code class="sourceCode curry">n</code>, <code class="sourceCode curry">m</code>, etc. denote natural numbers of type <code class="sourceCode curry"><span class="dt">Int</span></code></p></li>
+<li><p><code class="sourceCode curry">x</code>, <code class="sourceCode curry">y</code>, <code class="sourceCode curry">z</code> often denote values of polymorphic types</p></li>
+<li><p>A name with suffix <code class="sourceCode curry">s</code> denote several values like lists. Here are some examples: <code class="sourceCode curry"><span class="ot">xs ::</span> [a]</code>, <code class="sourceCode curry"><span class="ot">fs ::</span> [a <span class="ot">-&gt;</span> b]</code>, <code class="sourceCode curry"><span class="ot">xss ::</span> [[a]]</code></p></li>
+<li><p><code class="sourceCode curry">p</code> denotes a predicate of type <code class="sourceCode curry">a <span class="ot">-&gt;</span> <span class="dt">Bool</span></code></p></li>
+<li><p>A name with an apostroph, like <code class="sourceCode curry">x&#39;</code>, denote modified values:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true"></a><span class="kw">let</span> acc&#39; <span class="fu">=</span> updateAcc acc <span class="kw">in</span> <span class="ot">..</span><span class="fu">.</span></span></code></pre></div></li>
+<li><p><code class="sourceCode curry">k</code> and <code class="sourceCode curry">v</code> are often used for <em>keys</em> and <em>values</em> in a mapping.</p></li>
+</ul>
+<h1 data-number="6" id="compiler-warnings"><span class="header-section-number">6</span> Compiler Warnings</h1>
+<p>Code should be compilable with the parsing option</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true"></a><span class="fu">:</span>set parser <span class="fu">-</span><span class="dt">Wall</span></span></code></pre></div>
+<p>without producing any warnings. If one uses a more logic-oriented programming style, operations are often defined with overlapping rules or incomplete pattern matching. In this case, one can explicitly omit the warnings by the parsing option</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true"></a><span class="ot">{-# OPTIONS_CYMAKE -Wno-incomplete-patterns -Wno-overlapping #-}</span></span></code></pre></div>
+<p>in the beginning module header. However, this should be done <em>only</em> in a program that depends on these features of Curry.</p>
+</body>
+</html>

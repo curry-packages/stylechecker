@@ -1,3 +1,5 @@
+{-# LANGUAGE MultiParamTypeClasses, FunctionalDependencies #-}
+
 -- deriving ----------------------------------
 
 -- erroneous alignment
@@ -64,6 +66,10 @@ class Test a where
 class Test1 a where
    d1 :: a
    e1 :: a
+
+class Test2 a b | a -> b where
+  d2 :: a -> b
+  e2 :: b -> a
 
 -- instance declaration -----------------------
 

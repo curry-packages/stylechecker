@@ -5,19 +5,20 @@ import Curry.Span
 import Text.Pretty
 
 import Types
-import State
+import Control.Monad.Trans.State
+import Control.Applicative       ( when )
 
 checkLineLength :: SrcLine -> CSM ()
 checkLineLength (n,l) = do
   c <- getConfig
-  whenM (length l > (maxLineLength c))
-        (report (Message
-                  (Span
-                    (Position n 1)
-                    (Position n (length l)))
-                  (text "line too long")
-                  (text "line should be under"
-                  <+> colorizeKey (show (maxLineLength c))
-                  <+> text "character(s)")
-                )
-        )
+  when (length l > (maxLineLength c))
+       (report (Message
+                 (Span 
+                   (Position n 1)
+                   (Position n (length l)))
+                 (text "line too long")
+                 (text "line should be under"
+                 <+> colorizeKey (show (maxLineLength c))
+                 <+> text "character(s)")
+               )
+       )

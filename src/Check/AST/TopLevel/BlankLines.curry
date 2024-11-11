@@ -7,53 +7,67 @@ import Curry.Span
 import Curry.Position
 import Curry.Types
 import Curry.Ident
+import Control.Monad ( unless )
 
 import Types
 
--- applies actual check on Modules
+-- Applies actual check on Modules.
 checkBlankLines :: Module a -> Int-> CSM ()
-checkBlankLines e _ =
-  case e of
-    (Module sI _ _ _ _ decls) -> checkBlankLines' sI decls
-    _                         -> return ()
+checkBlankLines (Module sI _ _ _ _ _ decls) _ = checkBlankLines' sI decls
 
---checks if there is at least one blank line between TopLevel Declarations,
---case its a typesignature, there is no need to check, else check
+-- Checks if there is at least one blank line between top level declarations.
+-- If it's a type signature, there is no need to check. Otherwise the check
+-- is applied.
 checkBlankLines' :: SpanInfo -> [Decl a] -> CSM ()
 checkBlankLines' _ []                   = return ()
-checkBlankLines' sI (decl:[])           = return () --noBlank sI decl
+checkBlankLines' _ (_:[])               = return ()
 checkBlankLines' sI (decl1:decl2:decls) =
   case decl1 of
     (TypeSig _ _ _)     -> checkBlankLines' sI (decl2:decls)
     (InfixDecl _ _ _ _) -> case decl2 of
-                           (InfixDecl _ _ _ _) ->  checkBlankLines' sI (decl2:decls)
-                           _                   ->  do blankLine decl1 decl2
-                                                      checkBlankLines' sI (decl2:decls)
+                             (InfixDecl _ _ _ _) ->  checkBlankLines' sI (decl2:decls)
+                             _                   ->  do blankLine decl1 decl2
+                                                        checkBlankLines' sI (decl2:decls)
     _                   -> do blankLine decl1 decl2
                               checkBlankLines' sI (decl2:decls)
 
--- see if the difference between start and end of the two declarations is at
--- least one (This check doesn't work if there are comments in between)
+-- Checks if two different top-level declarations are properly aligned
+-- (This check might not work if there are comments in between).
+-- 
+-- Two top-level declarations are misaligned if ...
+-- (a) one top level declaration is surrounded by the other (missing spatial separation),
+-- (b) or there is no blank line between the two declarations.
 blankLine :: Decl a -> Decl a -> CSM ()
 blankLine decl1 decl2 = do
-  let sI1@(SpanInfo (Span _ (Position l c)) _) = getSpanInfo decl1
-      sI2 = getSpanInfo decl2
-  unlessM ((getLi sI2) - l > 1)
-          (report (Message
-                    (getSpan sI2)
-                    ( colorizeKey "Blank Line" <+> text "missing")
-                    ( text "leave a"
-                      <+> colorizeKey "blank line"
-                      <+> text "between"
-                      <+> colorizeKey "top level declarations")
-                  )
-          )
+  let sI1@(SpanInfo (Span _ (Position l _)) _) = getSpanInfo decl1
+      sI2                                      = getSpanInfo decl2
+  unless ((getLi sI2) - l > 1) $ 
+          if getEndLi sI2 < getEndLi sI1 
+            then report (Message
+                          (getSpan sI2)
+                          (text "Top level declaration is surrounded by another declaration")
+                          (text "Move inner declaration below the surrounding declaration," 
+                           <+> 
+                           text "keeping at least one blank line" )
+                        )
+            else report (Message
+                          (getSpan sI2)
+                          ( colorizeKey "Blank Line" <+> text "missing")
+                          ( text "leave a"
+                            <+> colorizeKey "blank line"
+                            <+> text "between"
+                            <+> colorizeKey "top level declarations")
+                        )
 
--- not used yet, checking for "trailing blanklines"
+-- Not used yet, checks for "trailing blanklines".
+--
+-- Because the curry frontend does not account for 
+-- trailing blank lines in module spans,
+-- this check seems to be unnecessary and should removed in the future.
 noBlank :: SpanInfo -> Decl a -> CSM ()
 noBlank sI decl = do
   let sID = getSpanInfo decl
-  unlessM ((getEndLi sI) == (getEndLi sID))
+  unless (getEndLi sI == getEndLi sID)
           (report (Message
                     (getSpan sI)
                     ( colorizeKey "blank line(s)"
@@ -64,6 +78,8 @@ noBlank sI decl = do
                   )
           )
 
--- returns line of end position from Spaninfo
+-- Returns line of end position from Spaninfo.
 getEndLi :: SpanInfo -> Int
-getEndLi (SpanInfo (Span _ (Position l _)) _) = l
+getEndLi si = case si of 
+  (SpanInfo (Span _ (Position l _)) _) -> l
+  _ -> error "getEndLi: NoSpanInfo"

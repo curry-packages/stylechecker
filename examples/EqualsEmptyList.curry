@@ -5,7 +5,7 @@ fz = [] == [2]
 lz = []
 
 -- error
-gz = if ([1] /= []) then "oh no" else "ok"
+gz = if ([1] /= []) then "ok" else "oh no"
 
 -- error
 hz = (==) [1,2,3] []
