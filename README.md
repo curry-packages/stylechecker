@@ -2,8 +2,8 @@ stylechecker: A tool to check the formatting style of Curry programs
 ====================================================================
 
 This package contains the implementation of a tool to check
-the formatting style of a *valid* Curry program according
-to the [Curry Style Guide](http://www.informatik.uni-kiel.de/~pakcs/CurryStyleGuide.html).
+the formatting style of a *valid* Curry program according to the
+[Curry Style Guide](https://cpm.curry-lang.org/PACKAGES/stylechecker-2.0.0/docs/style-guide/curry-style-guide.html).
 The style aspects checked by this tool contain formatting (indentation) rules,
 avoiding long lines, tailing spaces, etc.
 
