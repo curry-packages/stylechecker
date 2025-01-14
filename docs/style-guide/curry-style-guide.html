@@ -301,13 +301,13 @@
 <h2 data-number="2.2" id="import-declarations"><span class="header-section-number">2.2</span> Import Declarations</h2>
 <p>The list of imported modules should be ordered in the following three categories:</p>
 <ol type="1">
-<li>Standard library modules, e.g., <code class="sourceCode curry"><span class="dt">List</span></code>, <code class="sourceCode curry"><span class="dt">IO</span></code></li>
-<li>Third party libraries (often not used)</li>
-<li>Other local modules (developed with the current application)</li>
+<li>Modules from the standard base library, e.g., <code class="sourceCode curry"><span class="dt">Data.List</span></code>, <code class="sourceCode curry"><span class="dt">System.IO</span></code></li>
+<li>Modules from other packages.</li>
+<li>Further local modules (developed with the current application),</li>
 </ol>
 <p>The list of imports in each category should be sorted alphabetically. With the exception of the prelude, all used entities from imported modules should be explicitly or <code class="sourceCode curry">qualified</code> imported. If the list of imported entities is long, one can omit this general rule.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="kw">import           </span><span class="dt">List</span>        (isInfixOf)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a><span class="kw">import qualified</span> <span class="dt">Set</span>  <span class="kw">as</span> <span class="dt">Set</span></span>
+<div class="sourceCode" id="cb12"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="kw">import           </span><span class="dt">Data.List</span>        (isInfixOf)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true"></a><span class="kw">import qualified</span> <span class="dt">Data.Set</span>  <span class="kw">as</span> <span class="dt">Set</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true"></a></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true"></a><span class="kw">import </span><span class="dt">SecondParty.Module1</span> (fun)</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true"></a><span class="kw">import </span><span class="dt">ThirdParty.Module1</span>  ((<span class="fu">$$$</span>))</span>
@@ -537,7 +537,7 @@
 <h2 data-number="4.1" id="language"><span class="header-section-number">4.1</span> Language</h2>
 <p>Comments should be written in correct English. The identifiers used in a program should be also meaningful in English.</p>
 <h2 data-number="4.2" id="top-level-declarations"><span class="header-section-number">4.2</span> Top-Level Declarations</h2>
-<p>All top-level operations should have a comment and a type signature. This is a must for exported operations. One should use the syntax of <a href="https://www-ps.informatik.uni-kiel.de/currywiki/tools/currydoc">CurryDoc</a> for the comments of exported operations so that the program documentation can easily be generated.</p>
+<p>All top-level operations should have a comment and a type signature. This is a must for exported operations. One should use the syntax of <a href="https://cpm.curry-lang.org/pkgs/currydoc.html">CurryDoc</a> for the comments of exported operations so that the program documentation can easily be generated.</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode curry"><code class="sourceCode curry"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true"></a><span class="do">--- Splits the list argument into a list of lists of related adjacent</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true"></a><span class="do">--- elements.</span></span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true"></a><span class="do">--- @param eq - the relation to classify adjacent elements</span></span>

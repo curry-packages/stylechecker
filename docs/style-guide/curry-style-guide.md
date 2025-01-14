@@ -191,9 +191,10 @@ module Tree (Tree (..), BinTree (Leaf, Branch)) where
 The list of imported modules should be ordered in the following
 three categories:
 
- 1. Standard library modules, e.g., `List`{.curry}, `IO`{.curry}
- 2. Third party libraries (often not used)
- 3. Other local modules (developed with the current application)
+ 1. Modules from the standard base library,
+    e.g., `Data.List`{.curry}, `System.IO`{.curry}
+ 2. Modules from other packages.
+ 3. Further local modules (developed with the current application),
 
 The list of imports in each category should be sorted alphabetically.
 With the exception of the prelude, all used entities from imported
@@ -201,8 +202,8 @@ modules should be explicitly or `qualified`{.curry} imported.
 If the list of imported entities is long, one can omit this general rule.
 
 ~~~ {.curry}
-import           List        (isInfixOf)
-import qualified Set  as Set
+import           Data.List        (isInfixOf)
+import qualified Data.Set  as Set
 
 import SecondParty.Module1 (fun)
 import ThirdParty.Module1  (($$$))
@@ -630,7 +631,7 @@ This is a must for exported operations.
 One should use the syntax of [CurryDoc] for the comments of
 exported operations so that the program documentation can easily be generated.
 
-[CurryDoc]: https://www-ps.informatik.uni-kiel.de/currywiki/tools/currydoc
+[CurryDoc]: https://cpm.curry-lang.org/pkgs/currydoc.html
 
 ~~~{.curry}
 --- Splits the list argument into a list of lists of related adjacent
