@@ -33,7 +33,8 @@ scBanner = unlines [bannerLine,bannerText,bannerLine]
 
 -- URL containing Curry style guide:
 styleGuideURL :: String
-styleGuideURL = "http://www.informatik.uni-kiel.de/~curry/style/"
+styleGuideURL =
+  "https://cpm.curry-lang.org/PACKAGES/stylechecker-2.0.0/docs/style-guide/curry-style-guide.html"
 
 -- Commandline tool.
 main :: IO ()
